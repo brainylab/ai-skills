@@ -6,7 +6,7 @@ Defina entidades e value objects com uma estrutura consistente e reutilizável e
 
 Os exemplos são modelos estruturais com nomes ilustrativos. Substitua nomes, propriedades e valores padrão pelo conceito de negócio a implementar, sem acrescentar comportamentos não solicitados.
 
-Antes de aplicar o padrão, confira os contratos de `Entity`, `AggregateRoot`, `ValueObject`, `DefaultProps`, `UniqueEntityID` e `Optional` disponíveis no projeto. A quantidade de parâmetros genéricos e a forma de construir identificadores podem variar. Este documento não exige substituir essas implementações.
+Antes de aplicar o padrão, confira os contratos de `Entity`, `AggregateRoot`, `ValueObject`, `DefaultProps`, `UniqueEntityID` e `Optional` disponíveis no projeto, além de `PublicEntityID` quando houver propriedades de ID público. A quantidade de parâmetros genéricos e as assinaturas de construção podem variar, mas a identidade principal da entidade é sempre `UniqueEntityID`. Este documento não exige substituir essas implementações.
 
 ## 1. Organização e nomenclatura
 
@@ -22,7 +22,7 @@ Antes de aplicar o padrão, confira os contratos de `Entity`, `AggregateRoot`, `
 ## 2. Estrutura das entidades
 
 - Declare a interface de propriedades estendendo `DefaultProps`.
-- Estenda `AggregateRoot<Props>` ou `AggregateRoot<Props, ID>`, conforme a assinatura da base adotada.
+- Estenda `AggregateRoot<Props>` ou `AggregateRoot<Props, UniqueEntityID>`, conforme a assinatura da base adotada. O tipo da identidade principal é sempre `UniqueEntityID`, nunca `PublicEntityID`.
 - Utilize `this.props` para acessar o estado protegido da entidade.
 - Utilize a identidade, as datas e o método `touch()` mantidos pela classe-base, sem duplicar esses membros na entidade concreta.
 - Não declare um construtor próprio apenas para repetir o construtor protegido herdado.
@@ -40,21 +40,21 @@ export interface DefaultProps {
 
 ## 3. Identidade e assinatura da base
 
-### Identidade obrigatória
+### Identidade principal: sempre `UniqueEntityID`
 
-Use `id: UniqueEntityID` como segundo argumento de `create()` quando o identificador precisar ser fornecido pelo chamador. Encaminhe-o ao construtor sem substituí-lo.
+- O `id` principal de toda entidade é sempre `UniqueEntityID`, encapsulando um `number` associado ao identificador autoincremental da persistência. Não aceite UUIDs ou strings nessa primitiva.
+- Mantenha o `id` na classe-base, fora da interface de propriedades. Receba-o como segundo argumento de `create()` e encaminhe-o ao construtor sem substituí-lo.
+- O incremento é responsabilidade da persistência, não da entidade ou do wrapper de identidade. Não use `new UniqueEntityID()` sem valor nem gere números aleatórios ou sequenciais no domínio.
+- Se o ID só existir após a inserção, siga o contrato do projeto para entidades ainda não persistidas, sem trocar seu tipo por `PublicEntityID` nem inventar IDs provisórios.
 
-### Identidade opcional
+### Propriedade adicional de ID público: `PublicEntityID`
 
-Use `id?: UniqueEntityID` quando a implementação do identificador permitir criar uma identidade sem receber um valor. Nesse caso, a fábrica pode encaminhar:
-
-```ts
-id ?? new UniqueEntityID()
-```
-
-Não utilize essa construção se `UniqueEntityID` exigir um argumento. Não presuma que o identificador seja numérico, textual ou de um formato específico.
-
-Referências a outras entidades podem utilizar tipos diferentes da identidade principal, como `IncrementEntityID`, quando esse tipo estiver disponível. Preserve o contrato de cada propriedade, sem impor o mesmo tipo a todos os identificadores.
+- Use `PublicEntityID`, exclusivamente UUID, somente quando o modelo possuir uma propriedade adicional de ID público, como `public_id`. Essa propriedade não substitui nem altera o `id` principal.
+- Declare a propriedade em `<Nome>Props` e exponha-a por getter, como os demais dados da entidade. Preserve a convenção de nomes do projeto.
+- A existência do tipo `PublicEntityID` não exige adicionar `public_id` a todas as entidades. Quando o modelo exigir o campo, ele pode ser obrigatório nas propriedades; opcional é sua existência no modelo, não necessariamente seu valor.
+- Não use `PublicEntityID` como argumento de identidade da classe-base nem como tipo genérico da identidade principal.
+- Preserve UUIDs recebidos. Gere um novo UUID somente quando previsto para a criação, seguindo a API da primitiva; nunca ao reconstituir uma entidade existente.
+- Mappers devem preservar o `id` principal e a propriedade pública, quando existente, separadamente. O uso dessa propriedade nos contratos externos depende dos requisitos do projeto e não substitui autorização.
 
 ### Parâmetros genéricos
 
@@ -71,7 +71,7 @@ Siga esta sequência:
 
 1. Receba as propriedades tipadas.
 2. Utilize `Optional<Props, Campos>` para indicar os campos que podem ser omitidos na criação.
-3. Receba a identidade como segundo argumento, obrigatório ou opcional conforme o contrato.
+3. Receba o `id` principal como `UniqueEntityID` no segundo argumento; propriedades adicionais de ID público, quando previstas, pertencem a `props`.
 4. Instancie a própria classe, preservando as propriedades com `...props`.
 5. Aplique os valores padrão necessários com `??`.
 6. Encaminhe a identidade ao construtor.
@@ -113,21 +113,27 @@ Não substitua setters por métodos adicionais nem acrescente funções privadas
 
 ## 6. Modelo de entidade com getters e setter
 
-O modelo utiliza a assinatura de base com um parâmetro genérico e identidade obrigatória. `configured` e `configuredAt` são campos ilustrativos para demonstrar o setter e seus efeitos nas datas.
+O modelo utiliza a assinatura de base com um parâmetro genérico e identidade principal obrigatória do tipo `UniqueEntityID`. `configured` e `configuredAt` demonstram o setter e seus efeitos nas datas. Neste exemplo, o modelo também exige a propriedade adicional `public_id: PublicEntityID`; omita essa propriedade, seu import e seu getter em entidades que não possuam ID público.
 
 ```ts
 import { AggregateRoot } from "@core/entities/aggregate-root";
 
 import type { DefaultProps } from "@core/entities/entity";
+import type { PublicEntityID } from "@core/entities/public-entity-id";
 import type { UniqueEntityID } from "@core/entities/unique-entity-id";
 import type { Optional } from "@core/types/optional";
 
 export interface ConfigurationProps extends DefaultProps {
+  public_id: PublicEntityID;
   configured: boolean;
   configuredAt?: Date;
 }
 
 export class Configuration extends AggregateRoot<ConfigurationProps> {
+  get public_id() {
+    return this.props.public_id;
+  }
+
   get configured() {
     return this.props.configured;
   }
@@ -160,28 +166,7 @@ export class Configuration extends AggregateRoot<ConfigurationProps> {
 }
 ```
 
-### Variante de fábrica com identidade opcional
-
-Se `UniqueEntityID` permitir construção sem argumento, a fábrica pode utilizar esta variante. Nesse caso, importe `UniqueEntityID` como valor, e não apenas com `import type`.
-
-```ts
-static create(
-  props: Optional<ConfigurationProps, "configured" | "configuredAt">,
-  id?: UniqueEntityID,
-) {
-  const configuration = new Configuration(
-    {
-      ...props,
-      configured: props.configured ?? false,
-    },
-    id ?? new UniqueEntityID(),
-  );
-
-  return configuration;
-}
-```
-
-A escolha entre as variantes depende da implementação compartilhada. Ela não exige modificar o restante da entidade nem adicionar setters aos campos que devem permanecer somente para leitura.
+A fábrica recebe `id: UniqueEntityID` separadamente de `props.public_id: PublicEntityID`. O `...props` preserva a propriedade pública recebida; ela não é encaminhada no lugar do `id` ao construtor da classe-base. Ajuste os imports às localizações reais das primitivas no projeto.
 
 ## 7. Estrutura dos value objects
 
@@ -280,7 +265,9 @@ export class ResourceUrl extends ValueObject<ResourceUrlProps> {
 - Os nomes das classes, propriedades, arquivos e diretórios representam o conceito implementado, não os nomes ilustrativos deste guia.
 - Os imports apontam para as primitivas e aliases disponíveis no projeto.
 - A assinatura de `AggregateRoot` corresponde à implementação compartilhada.
-- A fábrica preserva a identidade recebida e só gera outra quando essa operação é suportada e prevista.
+- A identidade principal é sempre `UniqueEntityID` numérico, mantida pela classe-base e preservada pela fábrica, com incremento sob responsabilidade da persistência.
+- `PublicEntityID` representa somente UUIDs em propriedades adicionais previstas no modelo, nunca a identidade principal ou seu parâmetro genérico.
+- A presença de `public_id` não é obrigatória em todas as entidades; quando existir, a fábrica e os mappers preservam seu valor sem gerar outro UUID na reconstituição.
 - Os valores padrão utilizam `??` e não sobrescrevem valores explícitos válidos.
 - Os getters expõem o estado necessário e os setters existem somente onde há alteração prevista.
 - Setters atualizam as propriedades, as datas específicas quando existentes e `updatedAt` por `touch()`.
