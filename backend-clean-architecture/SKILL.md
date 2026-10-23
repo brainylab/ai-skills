@@ -44,7 +44,7 @@ presentation   → application, domain e core
 - Coloque invariantes e comportamentos de negócio no domínio. Casos de uso coordenam entidades e dependências por contratos, com entrada e saída explícitas e sem detalhes de transporte ou persistência.
 - Injete implementações concretas nos pontos de composição, como factories e bootstrap; não em entidades ou casos de uso.
 - Faça mappers converterem persistência e domínio. Resolva configuração de ambiente na infraestrutura e injete os valores necessários; não versione segredos.
-- Faça controllers validarem a entrada, chamarem casos de uso e traduzirem resultados para o transporte. Mantenha seus schemas no próprio arquivo e reutilize-os nos testes de validação.
+- Faça controllers validarem a entrada, chamarem casos de uso e traduzirem resultados para o transporte. Mantenha seus schemas no próprio arquivo e valide-os pelo fluxo HTTP nos testes E2E, sem duplicar suas definições.
 - Use presenters para formatar respostas públicas sem consultas, regras de negócio ou exposição de credenciais e dados sensíveis.
 - Organize módulos por capacidade de negócio. Comunique-os por contratos públicos de aplicação ou eventos, nunca por repositórios concretos, schemas ou detalhes internos, mesmo compartilhando o banco.
 - Compartilhe apenas conceitos realmente comuns; não mova regras de negócio para `utils/` nem para `core/` apenas para facilitar imports.
@@ -64,7 +64,8 @@ Adapte a sequência ao escopo: uma correção pontual não exige recriar o fluxo
 ## Validação e revisão
 
 - Siga a organização de testes do projeto; mantenha testes unitários de domínio e aplicação independentes de banco, rede e servidor HTTP.
-- Teste persistência e integrações com dependências controladas; cubra validação, tradução de erros e formato das respostas nos testes HTTP.
+- Teste persistência e integrações com dependências controladas.
+- Controllers devem ter apenas testes E2E, exercitando as rotas HTTP da aplicação e cobrindo validação, tradução de erros e formato das respostas. Não crie testes unitários ou de integração isolados para controllers ou seus schemas.
 - Execute testes, checagem de tipos e lint pertinentes com os comandos existentes. Não afirme que passaram sem executá-los.
 - Em auditorias, apresente caminhos e evidências. Diferencie violações de dependência de preferências de nomenclatura e não trate pastas opcionais ausentes como falhas.
 - Ao concluir, resuma alterações e validações realizadas, indicando o que não foi possível validar.

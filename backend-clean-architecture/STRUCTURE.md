@@ -145,7 +145,7 @@ presentation   → application, domain e core
 
 - Controllers validam a requisição, chamam casos de uso e traduzem o resultado para o transporte.
 - Todos os schemas de validação de um controller (`query`, `params`, `body`, `headers` e `response`) ficam no próprio arquivo do controller.
-- Não crie arquivos separados para schemas dos controllers. Testes de validação devem reutilizar esses schemas, sem duplicar suas definições.
+- Não crie arquivos separados para schemas dos controllers. Valide-os pelo fluxo HTTP nos testes E2E, usando os schemas registrados pelo controller, sem duplicar suas definições.
 - Presenters transformam os resultados em respostas públicas, sem executar consultas ou regras de negócio.
 - Factories conectam casos de uso, repositórios e adapters concretos.
 - O framework HTTP pode ser usado na apresentação e na infraestrutura HTTP, nunca no domínio ou na aplicação.
@@ -165,7 +165,7 @@ presentation   → application, domain e core
 - Use `test/factories/` para construir objetos e dados de teste e `test/repositories/` para repositórios em memória.
 - Testes unitários de domínio e aplicação não devem exigir banco, rede ou servidor HTTP.
 - Teste repositórios concretos e integrações em testes de integração, com dependências controladas.
-- Cubra validação, tradução de erros e formato das respostas nos testes HTTP.
+- Controllers devem ter apenas testes E2E, exercitando as rotas HTTP da aplicação e cobrindo validação, tradução de erros e formato das respostas. Não crie testes unitários ou de integração isolados para controllers ou seus schemas.
 
 ## Exemplo de fluxo
 
