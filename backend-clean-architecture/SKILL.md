@@ -17,8 +17,9 @@ Os detalhes e exemplos ficam nos arquivos ao lado desta skill. Resolva os caminh
 | --- | --- | --- |
 | [STRUCTURE.md](STRUCTURE.md) | Antes de criar ou reorganizar módulos, distribuir responsabilidades entre camadas, implementar casos de uso, persistência ou controllers, ou auditar a arquitetura. | Árvore de referência, responsabilidades, contratos, composição, isolamento entre módulos e organização dos testes. |
 | [ENTITIES.md](ENTITIES.md) | Antes de criar, alterar ou revisar entidades, aggregate roots, value objects, primitivas do domínio ou mapeamentos de identificadores. | Identidade principal sempre `UniqueEntityID` numérico; propriedades adicionais de ID público, como `public_id`, usam `PublicEntityID` UUID quando previstas no modelo. Propriedades, herança, fábricas, datas, getters, setters e exemplos. |
+| [INFRASTRUCTURE.md](INFRASTRUCTURE.md) | Antes de implementar ou revisar recursos técnicos, gateways, contracts, adapters, factories, pontos de acesso ou ciclo de vida da infraestrutura. | Organização e direção dos imports, distinção entre gateways e contratos técnicos, exemplos, composição, configuração, segurança e testes. |
 
-- Se a tarefa envolver estrutura e entidades, consulte ambos; não carregue todos os exemplos para uma alteração que não os utiliza.
+- Quando a tarefa envolver mais de um guia, consulte as seções relevantes de cada um; não carregue todos os exemplos para uma alteração que não os utiliza.
 - Trate os guias como referência de implementação, não como justificativa para ampliar o escopo. Exemplos em TypeScript devem ser adaptados à stack e aos contratos reais do projeto.
 - Respeite as instruções específicas do projeto. Preserve convenções existentes quando a tarefa não exigir alterá-las; não substitua primitivas ou estratégias de erro apenas para reproduzir um exemplo.
 
