@@ -65,6 +65,7 @@ Adapte a sequência ao escopo: uma correção pontual não exige recriar o fluxo
 ## Validação e revisão
 
 - Siga a organização de testes do projeto; mantenha testes unitários de domínio e aplicação independentes de banco, rede e servidor HTTP.
+- Não crie testes para entidades ou aggregate roots. Entre entidades e value objects, teste apenas value objects, conforme `ENTITIES.md`; mantenha os testes das demais camadas conforme suas regras específicas.
 - Teste persistência e integrações com dependências controladas.
 - Controllers devem ter apenas testes E2E, exercitando as rotas HTTP da aplicação e cobrindo validação, tradução de erros e formato das respostas. Não crie testes unitários ou de integração isolados para controllers ou seus schemas.
 - Execute testes, checagem de tipos e lint pertinentes com os comandos existentes. Não afirme que passaram sem executá-los.

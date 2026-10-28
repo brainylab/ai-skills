@@ -260,7 +260,11 @@ export class ResourceUrl extends ValueObject<ResourceUrlProps> {
 }
 ```
 
-## 10. Checklist de aplicação
+## 10. Testes
+
+Não crie testes para entidades ou aggregate roots. Entre entidades e value objects, crie testes apenas para value objects, cobrindo os comportamentos previstos no contrato.
+
+## 11. Checklist de aplicação
 
 - Os nomes das classes, propriedades, arquivos e diretórios representam o conceito implementado, não os nomes ilustrativos deste guia.
 - Os imports apontam para as primitivas e aliases disponíveis no projeto.
