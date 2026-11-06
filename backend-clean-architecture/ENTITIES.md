@@ -12,6 +12,7 @@ Antes de aplicar o padrão, confira os contratos de `Entity`, `AggregateRoot`, `
 
 - Coloque entidades em `src/modules/<modulo>/domain/entities/`.
 - Coloque value objects em `src/modules/<modulo>/domain/entities/value-objects/`.
+- Em projetos existentes, preserve a organização equivalente. Por exemplo, `05-nest-clean` utiliza `src/domain/forum/enterprise/entities/` e seu subdiretório `value-objects/`; não mova esses arquivos apenas para reproduzir a árvore deste guia.
 - Mantenha as primitivas compartilhadas em `src/core/entities/` e o tipo `Optional` em `src/core/types/`.
 - Use arquivos em `kebab-case` e classes em `PascalCase`.
 - Declare `<Nome>Props` no mesmo arquivo da classe. Exporte a interface quando ela fizer parte do contrato consumido por outros arquivos.
@@ -168,9 +169,20 @@ export class Configuration extends AggregateRoot<ConfigurationProps> {
 
 A fábrica recebe `id: UniqueEntityID` separadamente de `props.public_id: PublicEntityID`. O `...props` preserva a propriedade pública recebida; ela não é encaminhada no lugar do `id` ao construtor da classe-base. Ajuste os imports às localizações reais das primitivas no projeto.
 
-## 7. Estrutura dos value objects
+## 7. Estrutura e funcionamento dos value objects
 
-- Estenda `ValueObject<Props>`.
+### Conceito: entidade versus valor
+
+Uma entidade representa algo cuja continuidade é acompanhada por uma identidade, mesmo quando seus dados mudam. Um value object representa um valor ou uma composição de dados; sua interpretação depende do conteúdo, não de uma identidade própria e de um ciclo de vida independente.
+
+- Use entidades e aggregate roots para estado e comportamentos de negócio acompanhados por identidade.
+- Use value objects para encapsular conceitos, normalizações, cálculos ou composições de dados que não precisam dessa identidade própria.
+- Um value object pode carregar IDs de entidades como parte de suas propriedades. Isso não o transforma em entidade: esses IDs referenciam a origem dos dados, não uma identidade própria gerenciada por `Entity`.
+- Neste projeto de referência também existem value objects usados como projeções de leitura. Esse é um padrão adotado pelo projeto, não uma obrigação de modelar todo resultado de consulta como value object.
+
+### Estrutura
+
+- Para novos objetos compostos que sigam a base compartilhada, estenda `ValueObject<Props>`. Antes de alterar um objeto existente, confira se ele utiliza essa base ou uma implementação independente.
 - Declare as propriedades no mesmo arquivo da classe.
 - Utilize o construtor protegido herdado e exponha dados ou resultados por getters.
 - Construa a instância por `static create(props)` ou por fábricas estáticas nomeadas.
@@ -178,11 +190,15 @@ A fábrica recebe `id: UniqueEntityID` separadamente de `props.public_id: Public
 - As propriedades podem conter valores simples, entidades, outros value objects e coleções, conforme o contrato necessário.
 - Quando o objeto incluir datas, seu contrato pode estender `DefaultProps` e expor essas datas por getters. Não imponha esse contrato a todos os value objects.
 
-Não acrescente setters aos value objects apenas para reproduzir a estrutura de uma entidade. Também não presuma que getters e ausência de setters garantam imutabilidade profunda: a proteção efetiva depende da implementação da base e dos valores expostos.
+Não acrescente setters, `touch()` ou eventos de domínio aos value objects apenas para reproduzir a estrutura de uma entidade. Para representar outro valor ou atualizar uma projeção, prefira construir uma nova instância.
+
+Getters e ausência de setters não garantem imutabilidade profunda. Na base observada, `protected props` restringe acesso no TypeScript, mas não congela nem copia as propriedades. Objetos, datas e arrays recebidos ou retornados por getters continuam compartilhando referências. Não afirme que o objeto é imutável em runtime nem introduza cópias defensivas ou congelamento sem um requisito explícito.
 
 ### Construção
 
 - Use `create()` para receber as propriedades e retornar a instância.
+- Diferencie criação a partir de entrada bruta de reconstituição de um valor já armazenado. Uma fábrica de normalização pode transformar o texto; uma fábrica de reconstituição deve preservar o valor conforme seu contrato.
+- A presença de `create()` não significa que exista validação. Confira o corpo da fábrica antes de atribuir a ela garantias de validade.
 - Use fábricas nomeadas quando a construção selecionar um contexto ou valor interno.
 - Separe `<Nome>Params` de `<Nome>Props` quando a fábrica receber parte dos dados e acrescentar propriedades antes de chamar o construtor.
 - Não introduza validações, erros ou conversões que não façam parte do contrato solicitado.
@@ -198,7 +214,49 @@ Não acrescente setters aos value objects apenas para reproduzir a estrutura de 
 
 Utilize o contrato de `equals()` disponível em `ValueObject`. Não acrescente uma implementação alternativa apenas para seguir este guia.
 
-Quando a base comparar propriedades com `JSON.stringify()`, reconheça que esse é o comportamento daquela implementação, não uma garantia de igualdade semântica para qualquer tipo de propriedade. Confira o contrato antes de depender dessa comparação em um novo conceito.
+Na base de `05-nest-clean`, `equals()` retorna `false` para argumento nulo, indefinido ou sem `props`, e compara `JSON.stringify(vo.props)` com `JSON.stringify(this.props)`. Portanto, instâncias distintas podem ser iguais quando suas propriedades produzem a mesma serialização. IDs presentes nas propriedades participam dessa comparação como dados; não são uma identidade separada da base.
+
+Essa estratégia não garante igualdade semântica para qualquer tipo:
+
+- A ordem das chaves pode afetar o resultado e propriedades com `undefined` podem ser omitidas.
+- Datas são comparadas por sua representação serializada, não pela identidade das instâncias de `Date`.
+- A comparação não verifica a classe concreta e não chama recursivamente os métodos `equals()` de IDs, entidades ou outros value objects.
+- Referências circulares não são suportadas por `JSON.stringify()`.
+
+Confira o contrato antes de depender dessa comparação em um novo conceito. Não estenda essas garantias a classes independentes: o `Slug` observado, por exemplo, não herda `ValueObject` nem disponibiliza `equals()`.
+
+### Referência observada em `05-nest-clean`
+
+Os arquivos abaixo ficam em `src/domain/forum/enterprise/entities/`, com os value objects em `value-objects/`:
+
+| Objeto | Papel | Construção e uso |
+| --- | --- | --- |
+| `Question` | Aggregate root com identidade, estado e comportamentos. | Sua fábrica usa `Slug.createFromText(title)` quando não recebe um slug. O setter de `title` substitui o slug e atualiza `updatedAt`. |
+| `Slug` | Valor simples que encapsula a representação textual de um slug. | `create(value)` preserva a string recebida; `createFromText(text)` normaliza o texto. Possui construtor privado e `value` público e mutável; não estende a base nem possui igualdade própria. |
+| `CommentWithAuthor` | Projeção de leitura que reúne dados do comentário e o nome do autor. | Estende `ValueObject<CommentWithAuthorProps>`, expõe getters e é construído por `create(props)`. `commentId` e `authorId` são referências às entidades consultadas. |
+| `QuestionDetails` | Projeção de leitura com dados da pergunta, autor e anexos. | Estende `ValueObject<QuestionDetailsProps>` e reúne IDs, título, conteúdo, `Slug`, `Attachment[]` e datas, sem adquirir o ciclo de vida de `Question`. |
+
+`Slug.createFromText()` aplica normalização Unicode `NFKD`, conversão para minúsculas, remoção de espaços externos, troca de espaços por hífens, remoção de caracteres fora de `\w` e hífen, troca de underscores por hífens, redução de hífens repetidos e remoção do hífen final. Por exemplo, `"Título da pergunta"` se torna `"titulo-da-pergunta"`. Esse processo não valida unicidade nem garante um resultado não vazio. Preserve a sequência real de operações; não descreva a fábrica como um validador genérico de URLs.
+
+O fluxo observado na consulta de comentários é:
+
+1. O contrato do repositório declara o retorno `CommentWithAuthor[]`, sem tipos de Prisma.
+2. A implementação na infraestrutura consulta comentários incluindo o autor.
+3. `PrismaCommentWithAuthorMapper.toDomain()` converte os dados para `CommentWithAuthor.create(...)`.
+4. O caso de uso retorna os value objects e o presenter os converte para o formato HTTP, por exemplo, expondo `author` como `authorName`.
+
+A consulta de detalhes segue a mesma separação: `QuestionsRepository.findDetailsBySlug()` retorna `QuestionDetails | null`, e `PrismaQuestionDetailsMapper` reúne os dados e reconstitui o slug com `Slug.create(raw.slug)`.
+
+Ao aplicar esse padrão:
+
+- Não acrescente o nome do autor a `Question` ou ao comentário apenas para atender uma consulta enriquecida; crie ou reutilize a projeção adequada.
+- Mantenha joins, includes e tipos do ORM na infraestrutura. O value object recebe dados explícitos; ele não consulta repositórios, banco ou configuração global.
+- Não trate projeção como DTO HTTP: ela é independente do transporte, e o presenter define a resposta pública.
+- Não use uma projeção para executar alterações de negócio no lugar da entidade ou do aggregate root.
+- Diferencie `QuestionDetails.attachments: Attachment[]`, usado na leitura, de `Question.attachments: QuestionAttachmentList`, que acompanha alterações na coleção do agregado. Não leve rastreamento de alterações para a projeção sem necessidade.
+- Ao ler de cache, `JSON.parse()` sozinho não reconstitui instâncias, getters, datas nem wrappers de ID. No caminho de cache observado em `PrismaQuestionsRepository`, o retorno é o objeto parseado diretamente; isso é uma limitação existente, não um padrão a reproduzir.
+
+Os exemplos acima documentam o funcionamento observado, não uma migração de primitivas. `05-nest-clean` utiliza `UniqueEntityID` com strings/UUIDs; essa implementação de referência não altera a política de identidade numérica definida na seção 3 para os projetos que seguem este guia.
 
 ## 8. Modelo de value object com `create()`
 
@@ -264,6 +322,8 @@ export class ResourceUrl extends ValueObject<ResourceUrlProps> {
 
 Não crie testes para entidades ou aggregate roots. Entre entidades e value objects, crie testes apenas para value objects, cobrindo os comportamentos previstos no contrato.
 
+Para valores como `Slug`, cubra a transformação de texto e a preservação do valor na reconstituição. Para objetos compostos, cubra fábricas, getters e a igualdade disponibilizada pela base, sem inventar garantias de imutabilidade ou comparação semântica. Não escreva testes de `equals()` para classes que não oferecem esse método. Preserve testes existentes; adicione novos testes quando necessário, sem alterar os já escritos.
+
 ## 11. Checklist de aplicação
 
 - Os nomes das classes, propriedades, arquivos e diretórios representam o conceito implementado, não os nomes ilustrativos deste guia.
@@ -275,5 +335,9 @@ Não crie testes para entidades ou aggregate roots. Entre entidades e value obje
 - Os valores padrão utilizam `??` e não sobrescrevem valores explícitos válidos.
 - Os getters expõem o estado necessário e os setters existem somente onde há alteração prevista.
 - Setters atualizam as propriedades, as datas específicas quando existentes e `updatedAt` por `touch()`.
-- Os value objects utilizam `create()` ou fábricas nomeadas conforme a forma de construção necessária.
+- Os value objects utilizam `create()` ou fábricas nomeadas conforme a forma de construção necessária, distinguindo normalização de entrada e reconstituição.
+- A escolha entre entidade, valor simples e projeção de leitura segue a responsabilidade do objeto; IDs nas propriedades não implicam identidade própria.
+- Projeções não incorporam ORM, consultas ou transporte HTTP e não substituem agregados nas operações de alteração.
+- A igualdade e a mutabilidade documentadas correspondem à implementação real, inclusive quando o objeto não herda `ValueObject`.
+- Coleções de leitura não recebem rastreamento de alterações apenas por existirem no agregado correspondente.
 - Não foram acrescentados métodos, validações, erros, eventos, políticas de cópia ou estratégias de igualdade sem requisito explícito.

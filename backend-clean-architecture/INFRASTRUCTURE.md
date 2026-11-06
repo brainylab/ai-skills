@@ -67,7 +67,7 @@ src/
 - Use arquivos em `kebab-case`, contratos e classes em `PascalCase` e factories com prefixo `make`.
 - Nomeie contratos técnicos como `DatabaseContract` e `HttpContract`; gateways como `SecretsGateway`; adapters pela tecnologia e capacidade, como `AwsSmSecretsAdapter`.
 - Preserve a convenção local de singular/plural das pastas. No `server-credentials`, banco e HTTP usam `adapters/` e `factory/`; gateways usam `adapter/` e `factories/`.
-- Preserve também a grafia existente `infraestructure/` nos módulos do `server-credentials`; a árvore apresenta a grafia de referência, não uma solicitação de renomeação.
+- Use a grafia `infrastructure/` para a infraestrutura exclusiva dos módulos. Reserve `src/infra/` para a infraestrutura compartilhada, conforme `STRUCTURE.md`.
 - Não crie diretórios vazios. Um gateway não exige uma camada técnica adicional quando seu próprio contrato já atende à implementação.
 
 ## 3. Localização dos contratos e direção dos imports
