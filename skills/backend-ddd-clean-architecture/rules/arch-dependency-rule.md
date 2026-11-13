@@ -1,17 +1,17 @@
-# Regra de dependência
+# Dependency rule
 
-As dependências apontam para as camadas internas:
+Dependencies point toward the inner layers:
 
 ```text
 application    → domain → core
-infrastructure → application, domain, core e src/infra
-presentation   → application, domain, core e src/infra/http
+infrastructure → application, domain, core and src/infra
+presentation   → application, domain, core and src/infra/http
 ```
 
-- `domain/` não depende de `application/`, `infrastructure/`, `presentation/` ou `infra/`.
-- `application/` não depende de infraestrutura ou apresentação. Pode importar contratos compartilhados de `src/gateways/`.
-- `infrastructure/` do módulo pode importar a infraestrutura compartilhada de `src/infra/`, como o ponto de acesso do banco e helpers técnicos, e os contratos de `src/gateways/`.
-- `presentation/` importa de `src/infra/http/` apenas o suporte ao transporte, como o helper de criação de controllers e os erros HTTP. Não importa banco, gateways concretos nem a `infrastructure/` do módulo; essas dependências entram pelas factories.
-- `core/` não depende de módulos de negócio nem de infraestrutura.
-- Factories são pontos de composição: podem importar implementações concretas para injetá-las nos casos de uso.
-- A regra também vale para imports de tipos: um tipo inferido do ORM continua sendo uma dependência de infraestrutura.
+- `domain/` does not depend on `application/`, `infrastructure/`, `presentation/` or `infra/`.
+- `application/` does not depend on infrastructure or presentation. It may import shared contracts from `src/gateways/`.
+- A module's `infrastructure/` may import the shared infrastructure in `src/infra/`, such as the database entry point and technical helpers, and the contracts in `src/gateways/`.
+- `presentation/` imports from `src/infra/http/` only transport support, such as the controller creation helper and HTTP errors. It does not import the database, concrete gateways or the module's `infrastructure/`; those dependencies come in through factories.
+- `core/` does not depend on business modules or on infrastructure.
+- Factories are composition points: they may import concrete implementations in order to inject them into use cases.
+- The rule also applies to type imports: a type inferred from the ORM is still an infrastructure dependency.

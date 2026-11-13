@@ -1,11 +1,11 @@
-# Exemplo de fluxo entre camadas
+# Example flow across layers
 
-Para cadastrar um usuário:
+To register a user:
 
-1. `CreateUserController` valida a entrada e chama `CreateUserUseCase`.
-2. `CreateUserUseCase` consulta o contrato `UserRepositories` para verificar se o e-mail já existe.
-3. O caso de uso utiliza `PasswordHasher` para gerar o hash e cria a entidade `User`, respeitando as invariantes do domínio.
-4. A implementação concreta de `UserRepositories` converte os dados e persiste o usuário.
-5. O caso de uso retorna uma saída explícita, sem credenciais; o presenter formata essa saída e o controller responde com o status HTTP adequado.
+1. `CreateUserController` validates the input and calls `CreateUserUseCase`.
+2. `CreateUserUseCase` queries the `UserRepositories` contract to check whether the email is already in use.
+3. The use case uses `PasswordHasher` to generate the hash and creates the `User` entity, respecting the domain invariants.
+4. The concrete implementation of `UserRepositories` converts the data and persists the user.
+5. The use case returns an explicit output, without credentials; the presenter formats that output and the controller responds with the appropriate HTTP status.
 
-A factory injeta o repositório e o gerador de hash concretos no caso de uso. Nos testes unitários, essas dependências são substituídas por implementações em memória ou fakes.
+The factory injects the concrete repository and hasher into the use case. In unit tests, these dependencies are replaced by in-memory implementations or fakes.

@@ -1,13 +1,13 @@
-# Infraestrutura: adapters
+# Infrastructure: adapters
 
-- Declare explicitamente o contrato implementado: `extends` para gateways e ports, que são `abstract class`; `implements` para interfaces, como contratos de repositório e contratos técnicos.
-- Encapsule clientes, conexões, cache e detalhes do provedor em membros privados.
-- Receba clientes e configuração pelo construtor sempre que possível. Monte-os na factory, sem ler ambiente dentro do caso de uso.
-- Converta entradas, respostas e falhas do provedor para o contrato esperado. Valide dados externos antes de tratá-los como confiáveis.
-- Não retorne objetos do SDK por conveniência e não use casts para ignorar respostas ausentes ou inválidas.
-- Não faça autorização de negócio depender apenas do sucesso de uma chamada técnica.
+- Declare explicitly which contract is implemented: `extends` for gateways and ports, which are an `abstract class`; `implements` for interfaces, such as repository contracts and technical contracts.
+- Encapsulate clients, connections, cache and provider details in private members.
+- Receive clients and configuration through the constructor whenever possible. Assemble them in the factory, without reading the environment inside the use case.
+- Convert provider inputs, responses and failures to the expected contract. Validate external data before treating it as trusted.
+- Do not return SDK objects for convenience, and do not use casts to ignore missing or invalid responses.
+- Do not make business authorization depend solely on the success of a technical call.
 
-Modelo de adapter com cliente injetável. `SecretsClient` é uma interface técnica ilustrativa; na implementação real, use a interface necessária do SDK existente ou um wrapper pequeno, sem criar outro port de aplicação para reproduzir o SDK inteiro:
+Model of an adapter with an injectable client. `SecretsClient` is an illustrative technical interface; in a real implementation, use the required interface of the existing SDK or a small wrapper, without creating another application port that mirrors the whole SDK:
 
 ```ts
 import { SecretsGateway } from "@/gateways/secrets/secrets-gateway";
@@ -33,4 +33,4 @@ export class ProviderSecretsAdapter extends SecretsGateway {
 }
 ```
 
-O exemplo mostra a tradução de uma resposta sem valor. A implementação real também deve tratar falhas do cliente conforme a estratégia de erros do projeto, sem expor respostas completas do provedor ou segredos. Defina separadamente se uma string vazia é válida para o contrato; não invente essa regra no adapter.
+The example shows the translation of a response with no value. A real implementation must also handle client failures according to the project's error strategy, without exposing full provider responses or secrets. Decide separately whether an empty string is valid for the contract; do not invent that rule in the adapter.

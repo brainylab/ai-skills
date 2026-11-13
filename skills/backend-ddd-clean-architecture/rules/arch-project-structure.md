@@ -1,29 +1,29 @@
-# Estrutura do projeto
+# Project structure
 
-Modular Monolith com Clean Architecture.
+Modular Monolith with Clean Architecture.
 
-Organize o backend em módulos de negócio dentro de uma única aplicação. Cada módulo separa regras de negócio, casos de uso, detalhes técnicos e interfaces de entrada.
+Organize the backend into business modules inside a single application. Each module separates business rules, use cases, technical details and entry interfaces.
 
-O objetivo é manter as regras de negócio independentes de banco de dados, frameworks e serviços externos, permitindo testar e substituir essas tecnologias sem reescrever os casos de uso.
+The goal is to keep business rules independent of the database, frameworks and external services, so that these technologies can be tested and replaced without rewriting the use cases.
 
-## Estrutura de referência
+## Reference structure
 
-Exemplo em TypeScript com um módulo `users`:
+TypeScript example with a `users` module:
 
 ```text
 src/
 ├── modules/
 │   └── users/
 │       ├── domain/
-│       │   └── entities/                 # entidades e aggregate roots
+│       │   └── entities/                 # entities and aggregate roots
 │       │       ├── user.ts
 │       │       └── value-objects/
 │       │           └── email.ts
 │       │
 │       ├── application/
-│       │   ├── repositories/             # contratos de persistência
+│       │   ├── repositories/             # persistence contracts
 │       │   │   └── user-repositories.ts
-│       │   ├── ports/                    # contratos de serviços externos
+│       │   ├── ports/                    # contracts for external services
 │       │   │   └── password-hasher.ts
 │       │   └── use-case/
 │       │       ├── create-user-use-case.ts
@@ -33,11 +33,11 @@ src/
 │       │
 │       ├── infrastructure/
 │       │   ├── database/
-│       │   │   └── <orm>/                # por exemplo: drizzle ou prisma
+│       │   │   └── <orm>/                # for example: drizzle or prisma
 │       │   │       ├── schemas/
 │       │   │       ├── repositories/
 │       │   │       └── mappers/
-│       │   └── adapters/                 # implementações de ports do módulo
+│       │   └── adapters/                 # implementations of the module ports
 │       │
 │       ├── presentation/
 │       │   └── http/
@@ -49,49 +49,49 @@ src/
 │       │           └── presenters/
 │       │               └── user-presenter.ts
 │       │
-│       └── test/                         # suporte aos testes do módulo
+│       └── test/                         # test support for the module
 │           ├── factories/
 │           │   └── make-user.ts
 │           └── repositories/
 │               └── in-memory-user-repositories.ts
 │
-├── core/                                 # primitivas compartilhadas sem framework
+├── core/                                 # shared, framework-free primitives
 │   ├── entities/                         # Entity, AggregateRoot, ValueObject, IDs
 │   ├── errors/
 │   ├── events/
 │   ├── types/
-│   └── use-case/                         # tipos comuns de entrada e saída
+│   └── use-case/                         # common input and output types
 │
-├── gateways/                             # contratos de integrações compartilhadas
+├── gateways/                             # contracts for shared integrations
 │
-├── infra/                                # infraestrutura compartilhada
-│   ├── app.ts                            # inicialização e encerramento dos serviços
-│   ├── env.ts                            # leitura e validação do ambiente
+├── infra/                                # shared infrastructure
+│   ├── app.ts                            # startup and shutdown of services
+│   ├── env.ts                            # environment loading and validation
 │   ├── config/
-│   ├── database/                         # conexão e configuração do banco
-│   │   ├── adapters/                     # integração com o driver ou ORM
+│   ├── database/                         # database connection and configuration
+│   │   ├── adapters/                     # integration with the driver or ORM
 │   │   │   └── <orm>-adapter.ts
-│   │   ├── contracts/                    # contrato técnico de acesso e ciclo de vida
+│   │   ├── contracts/                    # technical contract for access and lifecycle
 │   │   │   └── database-contract.ts
-│   │   ├── factory/                      # criação e configuração do adapter
+│   │   ├── factory/                      # adapter creation and configuration
 │   │   │   └── make-database.ts
-│   │   └── index.ts                      # ponto de acesso à infraestrutura de banco
-│   ├── gateways/                         # implementações dos contratos compartilhados
-│   ├── messaging/                        # conexão e configuração de mensageria
+│   │   └── index.ts                      # entry point to the database infrastructure
+│   ├── gateways/                         # implementations of the shared contracts
+│   ├── messaging/                        # messaging connection and configuration
 │   └── http/
-│       ├── adapters/                     # integração com o framework HTTP
+│       ├── adapters/                     # integration with the HTTP framework
 │       │   └── <framework>-adapter.ts
-│       ├── contracts/                    # contrato técnico do servidor HTTP
+│       ├── contracts/                    # technical contract of the HTTP server
 │       │   └── http-contract.ts
-│       ├── factory/                      # criação e configuração do servidor
+│       ├── factory/                      # server creation and configuration
 │       │   └── make-server.ts
 │       ├── errors/
 │       ├── helpers/
-│       ├── controllers.ts                # registro dos controllers dos módulos
-│       └── index.ts                      # ponto de acesso à infraestrutura HTTP
+│       ├── controllers.ts                # registration of the module controllers
+│       └── index.ts                      # entry point to the HTTP infrastructure
 │
-├── utils/                                # utilitários técnicos compartilhados
-└── main.ts                               # entrada e ciclo de vida do processo
+├── utils/                                # shared technical utilities
+└── main.ts                               # process entry point and lifecycle
 ```
 
-A árvore é uma referência, não uma lista de pastas obrigatórias. Crie apenas as estruturas necessárias. Adapte arquivos de schemas, relações e migrations à ferramenta de persistência escolhida.
+The tree is a reference, not a list of mandatory folders. Create only the structures you need. Adapt schema, relation and migration files to the chosen persistence tool.

@@ -1,9 +1,9 @@
-# Infraestrutura: erros, configuração e segurança
+# Infrastructure: errors, configuration and security
 
-- Valide ambiente centralmente e injete somente os valores necessários a cada dependência.
-- Não versione segredos nem registre credenciais, chaves, tokens, URLs autenticadas ou respostas completas do provedor.
-- Defina timeouts e, quando necessários, retries limitados e compatíveis com a idempotência da operação. Não repita operações indefinidamente nem esconda indisponibilidade com valores padrão.
-- Quando houver cache de segredos, defina validade, invalidação, isolamento e relação com rotação e revogação. Cache não pode ignorar uma exigência de revogação imediata.
-- Não enfraqueça TLS, validação de identidade ou autorização para contornar erros de integração.
-- Quando o ambiente de execução não tiver acesso à internet, as integrações devem funcionar sem ela. A presença de um adapter de nuvem não comprova conectividade privada disponível ou aprovada.
-- Mudanças em criptografia ou armazenamento de segredos exigem considerar compatibilidade, integridade, gerenciamento de chaves e migração; não copie algoritmos de exemplo como decisão de segurança.
+- Validate the environment centrally and inject only the values each dependency needs.
+- Do not commit secrets, and do not log credentials, keys, tokens, authenticated URLs or full provider responses.
+- Define timeouts and, when needed, retries that are bounded and compatible with the idempotency of the operation. Do not retry indefinitely, and do not hide unavailability behind default values.
+- When secrets are cached, define expiration, invalidation, isolation and how the cache relates to rotation and revocation. A cache must not bypass a requirement for immediate revocation.
+- Do not weaken TLS, identity validation or authorization to work around integration errors.
+- When the runtime environment has no internet access, integrations must work without it. The presence of a cloud adapter does not prove that private connectivity is available or approved.
+- Changes to cryptography or secret storage require considering compatibility, integrity, key management and migration; do not copy example algorithms as a security decision.

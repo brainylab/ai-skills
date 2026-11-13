@@ -1,19 +1,19 @@
-# Domínio: objetivo, organização e nomenclatura
+# Domain: purpose, organization and naming
 
-Defina entidades e value objects com uma estrutura consistente e reutilizável entre projetos: propriedades tipadas, classes-base compartilhadas, getters, setters quando necessários e fábricas estáticas.
+Define entities and value objects with a structure that is consistent and reusable across projects: typed properties, shared base classes, getters, setters when needed, and static factories.
 
-Os exemplos são modelos estruturais com nomes ilustrativos. Substitua nomes, propriedades e valores padrão pelo conceito de negócio a implementar, sem acrescentar comportamentos não solicitados.
+The examples are structural models with illustrative names. Replace names, properties and default values with the business concept being implemented, without adding behaviors that were not requested.
 
-Antes de aplicar o padrão, confira os contratos de `Entity`, `AggregateRoot`, `ValueObject`, `DefaultProps`, `UniqueEntityID` e `Optional` disponíveis no projeto, além de `PublicEntityID` quando houver propriedades de ID público. A quantidade de parâmetros genéricos e as assinaturas de construção podem variar, mas a identidade principal da entidade é sempre `UniqueEntityID`. Este documento não exige substituir essas implementações.
+Before applying the pattern, check the contracts of `Entity`, `AggregateRoot`, `ValueObject`, `DefaultProps`, `UniqueEntityID` and `Optional` available in the project, as well as `PublicEntityID` when there are public ID properties. The number of generic parameters and the construction signatures may vary, but the main identity of an entity is always `UniqueEntityID`. These rules do not require replacing those implementations.
 
-## Organização e nomenclatura
+## Organization and naming
 
-- Coloque entidades em `src/modules/<modulo>/domain/entities/`.
-- Coloque value objects em `src/modules/<modulo>/domain/entities/value-objects/`.
-- Em projetos existentes, preserve a organização equivalente. Por exemplo, um projeto pode utilizar `src/domain/<contexto>/enterprise/entities/` e seu subdiretório `value-objects/`; não mova esses arquivos apenas para reproduzir a árvore de referência.
-- Mantenha as primitivas compartilhadas em `src/core/entities/` e o tipo `Optional` em `src/core/types/`.
-- Use arquivos em `kebab-case` e classes em `PascalCase`.
-- Declare `<Nome>Props` no mesmo arquivo da classe. Exporte a interface quando ela fizer parte do contrato consumido por outros arquivos.
-- Preserve a convenção de nomes das propriedades adotada pelo projeto, sem converter automaticamente entre `camelCase` e `snake_case`.
-- Ajuste os aliases de importação ao projeto. Os exemplos destas regras utilizam `@core/...` apenas como referência.
-- Use `import type` para dependências utilizadas somente como tipos. Classes instanciadas no arquivo precisam de import de valor.
+- Place entities in `src/modules/<module>/domain/entities/`.
+- Place value objects in `src/modules/<module>/domain/entities/value-objects/`.
+- In existing projects, preserve the equivalent organization. For example, a project may use `src/domain/<context>/enterprise/entities/` and its `value-objects/` subdirectory; do not move those files just to reproduce the reference tree.
+- Keep the shared primitives in `src/core/entities/` and the `Optional` type in `src/core/types/`.
+- Use `kebab-case` files and `PascalCase` classes.
+- Declare `<Name>Props` in the same file as the class. Export the interface when it is part of the contract consumed by other files.
+- Preserve the property naming convention adopted by the project, without automatically converting between `camelCase` and `snake_case`.
+- Adjust import aliases to the project. The examples in these rules use `@core/...` only as a reference.
+- Use `import type` for dependencies used only as types. Classes instantiated in the file need a value import.

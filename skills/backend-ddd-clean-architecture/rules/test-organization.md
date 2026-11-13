@@ -1,8 +1,8 @@
-# Testes
+# Tests
 
-- Mantenha arquivos `*.spec.ts` próximos da unidade testada.
-- Use o sufixo `*.e2e.spec.ts` para testes E2E, ao lado do controller e com o mesmo nome, como `create-user-controller.e2e.spec.ts`. Eles podem ficar fora da execução padrão e rodar por comando próprio, conforme a configuração do projeto.
-- Use `test/factories/` para construir objetos e dados de teste e `test/repositories/` para repositórios em memória. Fakes de gateways e ports ficam em pastas nomeadas pelo tipo, como `test/gateways/` e `test/notifiers/`.
-- Testes unitários de domínio e aplicação não devem exigir banco, rede ou servidor HTTP.
-- Teste repositórios concretos e integrações em testes de integração, com dependências controladas.
-- Controllers devem ter apenas testes E2E, exercitando as rotas HTTP da aplicação e cobrindo validação, tradução de erros e formato das respostas. Não crie testes unitários ou de integração isolados para controllers ou seus schemas.
+- Keep `*.spec.ts` files next to the unit under test.
+- Use the `*.e2e.spec.ts` suffix for E2E tests, next to the controller and with the same name, such as `create-user-controller.e2e.spec.ts`. They may be excluded from the default run and executed by their own command, depending on the project configuration.
+- Use `test/factories/` to build test objects and data, and `test/repositories/` for in-memory repositories. Fakes of gateways and ports live in folders named after their kind, such as `test/gateways/` and `test/notifiers/`.
+- Unit tests of the domain and application layers must not require a database, the network or an HTTP server.
+- Test concrete repositories and integrations in integration tests, with controlled dependencies.
+- Controllers must have E2E tests only, exercising the application's HTTP routes and covering validation, error translation and response format. Do not create isolated unit or integration tests for controllers or their schemas.

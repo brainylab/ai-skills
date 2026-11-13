@@ -1,8 +1,8 @@
-# Camada de aplicação — casos de uso e contratos
+# Application layer — use cases and contracts
 
-- Cada caso de uso representa uma ação do sistema e expõe um método `execute()` com entrada e saída explícitas.
-- Recebe dependências pelo construtor, usando contratos em vez de implementações concretas.
-- Contratos de persistência ficam em `application/repositories/`; contratos de outros serviços necessários ao módulo ficam em `application/ports/`.
-- Coordena entidades e dependências, sem conhecer detalhes do transporte ou do banco.
-- Retorna resultados e erros da aplicação; códigos HTTP são definidos na apresentação.
-- Adote uma estratégia consistente para resultados e erros, como `Result`/`Either` ou exceções tipadas.
+- Each use case represents one action of the system and exposes an `execute()` method with explicit input and output.
+- It receives its dependencies through the constructor, using contracts instead of concrete implementations.
+- Persistence contracts live in `application/repositories/`; contracts for other services the module needs live in `application/ports/`.
+- It coordinates entities and dependencies, without knowing transport or database details.
+- It returns application results and errors; HTTP status codes are defined in the presentation layer.
+- Adopt a consistent strategy for results and errors, such as `Result`/`Either` or typed exceptions.

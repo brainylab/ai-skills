@@ -1,8 +1,8 @@
-# Isolamento entre módulos
+# Module isolation
 
-- Organize módulos por capacidade de negócio, como `users`, `orders` e `billing`, não por tabela do banco.
-- Um módulo não acessa repositórios concretos, schemas ou detalhes internos de outro módulo.
-- Quando houver comunicação entre módulos, exponha contratos de aplicação ou eventos com dados explícitos.
-- Compartilhar o mesmo banco não elimina as fronteiras entre módulos.
-- Use `core/` apenas para conceitos realmente compartilhados. Não mova regras específicas de um módulo para lá para facilitar imports.
-- Contratos de integrações usados por vários módulos podem ficar em `gateways/`; contratos exclusivos permanecem no módulo consumidor.
+- Organize modules by business capability, such as `users`, `orders` and `billing`, not by database table.
+- A module does not access another module's concrete repositories, schemas or internal details.
+- When modules need to communicate, expose application contracts or events with explicit data.
+- Sharing the same database does not remove the boundaries between modules.
+- Use `core/` only for concepts that are truly shared. Do not move module-specific rules there to make imports easier.
+- Contracts for integrations used by several modules may live in `gateways/`; contracts used by a single module stay in the consuming module.

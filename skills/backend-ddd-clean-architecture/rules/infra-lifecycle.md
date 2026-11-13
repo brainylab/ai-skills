@@ -1,11 +1,11 @@
-# Infraestrutura: inicialização e encerramento
+# Infrastructure: startup and shutdown
 
-- O bootstrap inicializa dependências antes dos seus consumidores: por exemplo, banco antes de aceitar requisições HTTP.
-- Aguarde cada inicialização e propague falhas; não anuncie disponibilidade antes de todos os recursos obrigatórios estarem prontos.
-- Se uma etapa falhar, libere os recursos já iniciados. Um recurso composto também deve limpar sua própria inicialização parcial.
-- Encerre em ordem inversa, deixando de aceitar novas requisições antes de fechar dependências utilizadas por elas.
-- Uma falha ao encerrar um recurso não deve impedir a tentativa de liberar os demais. Preserve a informação das falhas sem registrar dados sensíveis.
-- Defina o comportamento de chamadas repetidas de `start()` e `stop()` e teste-o. Não presuma idempotência de um driver ou framework.
-- Mantenha sinais e código de saída em `main.ts`; detalhes de conexão e servidor pertencem aos adapters.
+- The bootstrap starts dependencies before their consumers: for example, the database before accepting HTTP requests.
+- Await each startup and propagate failures; do not announce availability before all required resources are ready.
+- If a step fails, release the resources that were already started. A composite resource must also clean up its own partial initialization.
+- Shut down in reverse order, stopping the intake of new requests before closing the dependencies they use.
+- A failure while shutting down one resource must not prevent the attempt to release the others. Preserve the failure information without logging sensitive data.
+- Define the behavior of repeated calls to `start()` and `stop()`, and test it. Do not assume a driver or framework is idempotent.
+- Keep signals and exit codes in `main.ts`; connection and server details belong to the adapters.
 
-Essas são diretrizes de implementação, não uma afirmação de que todos esses controles já existem no serviço.
+These are implementation guidelines, not a statement that all of these controls already exist in the service.

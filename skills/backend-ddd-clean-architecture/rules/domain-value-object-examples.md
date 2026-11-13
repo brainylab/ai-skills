@@ -1,8 +1,8 @@
-# Domínio: modelos de value object
+# Domain: value object models
 
-## Modelo com `create()`
+## Model with `create()`
 
-O modelo demonstra a construção por propriedades e um getter que remove barras finais da URL base e codifica o nome do arquivo. O segmento `files` é ilustrativo; utilize o caminho necessário ao recurso.
+The model demonstrates construction from properties and a getter that removes trailing slashes from the base URL and encodes the file name. The `files` segment is illustrative; use the path the resource requires.
 
 ```ts
 import { ValueObject } from "@core/entities/value-object";
@@ -26,9 +26,9 @@ export class FileUrl extends ValueObject<FileUrlProps> {
 }
 ```
 
-## Modelo com fábricas nomeadas
+## Model with named factories
 
-Neste modelo, os parâmetros de entrada não incluem o diretório: cada fábrica define o contexto. Os nomes das fábricas e os diretórios são ilustrativos e devem representar os contextos necessários ao negócio.
+In this model, the input parameters do not include the directory: each factory defines the context. The factory names and the directories are illustrative and must represent the contexts the business needs.
 
 ```ts
 import { ValueObject } from "@core/entities/value-object";

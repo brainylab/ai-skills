@@ -1,8 +1,8 @@
-# Convenções gerais
+# General conventions
 
-- Use nomes de arquivos em `kebab-case` e nomes que expressem a responsabilidade de cada unidade.
-- Mantenha as grafias `infrastructure` e `presentation`; neste modelo, `infra/` é a abreviação reservada à infraestrutura compartilhada.
-- Não coloque regras de negócio em `utils/`. Utilitários das camadas internas devem continuar livres de dependências técnicas.
-- Centralize a validação de variáveis de ambiente e não versione segredos.
-- Separe `commands/` e `queries/` ou introduza mensageria somente quando a complexidade justificar.
-- Priorize fronteiras claras e dependências corretas, não a quantidade de diretórios.
+- Use `kebab-case` file names, and names that express the responsibility of each unit.
+- Keep the spellings `infrastructure` and `presentation`; in this model, `infra/` is the abbreviation reserved for shared infrastructure.
+- Do not put business rules in `utils/`. Utilities used by the inner layers must stay free of technical dependencies.
+- Centralize environment variable validation and do not commit secrets.
+- Split `commands/` and `queries/` or introduce messaging only when the complexity justifies it.
+- Prioritize clear boundaries and correct dependencies, not the number of directories.

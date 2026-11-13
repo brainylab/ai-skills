@@ -1,5 +1,5 @@
-# Testes de entidades e value objects
+# Tests for entities and value objects
 
-Não crie testes para entidades ou aggregate roots. Entre entidades e value objects, crie testes apenas para value objects, cobrindo os comportamentos previstos no contrato.
+Do not create tests for entities or aggregate roots. Between entities and value objects, create tests only for value objects, covering the behaviors defined by their contract.
 
-Para valores como `Slug`, cubra a transformação de texto e a preservação do valor na reconstituição. Para objetos compostos, cubra fábricas, getters e a igualdade disponibilizada pela base, sem inventar garantias de imutabilidade ou comparação semântica. Não escreva testes de `equals()` para classes que não oferecem esse método. Preserve testes existentes; adicione novos testes quando necessário, sem alterar os já escritos.
+For values such as `Slug`, cover the text transformation and the preservation of the value on reconstitution. For composite objects, cover factories, getters and the equality provided by the base class, without inventing guarantees of immutability or semantic comparison. Do not write `equals()` tests for classes that do not offer that method. Preserve existing tests; add new tests when needed, without changing the ones already written.

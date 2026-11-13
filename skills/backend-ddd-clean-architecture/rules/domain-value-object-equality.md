@@ -1,14 +1,14 @@
-# Domínio: igualdade de value objects
+# Domain: value object equality
 
-Utilize o contrato de `equals()` disponível em `ValueObject`. Não acrescente uma implementação alternativa apenas para seguir esta regra.
+Use the `equals()` contract available in `ValueObject`. Do not add an alternative implementation just to follow this rule.
 
-Na base de referência, `equals()` retorna `false` para argumento nulo, indefinido ou sem `props`, e compara `JSON.stringify(vo.props)` com `JSON.stringify(this.props)`. Portanto, instâncias distintas podem ser iguais quando suas propriedades produzem a mesma serialização. IDs presentes nas propriedades participam dessa comparação como dados; não são uma identidade separada da base.
+In the reference base class, `equals()` returns `false` for an argument that is null, undefined or has no `props`, and compares `JSON.stringify(vo.props)` with `JSON.stringify(this.props)`. Distinct instances can therefore be equal when their properties produce the same serialization. IDs present in the properties take part in this comparison as data; they are not a separate identity of the base class.
 
-Essa estratégia não garante igualdade semântica para qualquer tipo:
+This strategy does not guarantee semantic equality for every type:
 
-- A ordem das chaves pode afetar o resultado e propriedades com `undefined` podem ser omitidas.
-- Datas são comparadas por sua representação serializada, não pela identidade das instâncias de `Date`.
-- A comparação não verifica a classe concreta e não chama recursivamente os métodos `equals()` de IDs, entidades ou outros value objects.
-- Referências circulares não são suportadas por `JSON.stringify()`.
+- The order of keys may affect the result, and properties holding `undefined` may be omitted.
+- Dates are compared by their serialized representation, not by the identity of the `Date` instances.
+- The comparison does not check the concrete class and does not recursively call the `equals()` methods of IDs, entities or other value objects.
+- Circular references are not supported by `JSON.stringify()`.
 
-Confira o contrato antes de depender dessa comparação em um novo conceito. Não estenda essas garantias a classes independentes: um `Slug` implementado sem herdar `ValueObject`, por exemplo, não disponibiliza `equals()`.
+Check the contract before relying on this comparison in a new concept. Do not extend these guarantees to independent classes: a `Slug` implemented without inheriting from `ValueObject`, for example, does not provide `equals()`.

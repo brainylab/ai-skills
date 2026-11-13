@@ -1,40 +1,40 @@
-# Domínio: estrutura e funcionamento dos value objects
+# Domain: structure and behavior of value objects
 
-## Conceito: entidade versus valor
+## Concept: entity versus value
 
-Uma entidade representa algo cuja continuidade é acompanhada por uma identidade, mesmo quando seus dados mudam. Um value object representa um valor ou uma composição de dados; sua interpretação depende do conteúdo, não de uma identidade própria e de um ciclo de vida independente.
+An entity represents something whose continuity is tracked by an identity, even when its data changes. A value object represents a value or a composition of data; its meaning depends on its content, not on an identity of its own and an independent lifecycle.
 
-- Use entidades e aggregate roots para estado e comportamentos de negócio acompanhados por identidade.
-- Use value objects para encapsular conceitos, normalizações, cálculos ou composições de dados que não precisam dessa identidade própria.
-- Um value object pode carregar IDs de entidades como parte de suas propriedades. Isso não o transforma em entidade: esses IDs referenciam a origem dos dados, não uma identidade própria gerenciada por `Entity`.
-- Value objects também podem ser usados como projeções de leitura, conforme [domain-read-projections.md](domain-read-projections.md). Esse é um padrão opcional, não uma obrigação de modelar todo resultado de consulta como value object.
+- Use entities and aggregate roots for state and business behaviors that are tracked by identity.
+- Use value objects to encapsulate concepts, normalizations, calculations or compositions of data that do not need an identity of their own.
+- A value object may carry entity IDs as part of its properties. That does not turn it into an entity: those IDs reference the origin of the data, not an identity of its own managed by `Entity`.
+- Value objects may also be used as read projections, as described in [domain-read-projections.md](domain-read-projections.md). This is an optional pattern, not an obligation to model every query result as a value object.
 
-## Estrutura
+## Structure
 
-- Para novos objetos compostos que sigam a base compartilhada, estenda `ValueObject<Props>`. Antes de alterar um objeto existente, confira se ele utiliza essa base ou uma implementação independente.
-- Declare as propriedades no mesmo arquivo da classe.
-- Utilize o construtor protegido herdado e exponha dados ou resultados por getters.
-- Construa a instância por `static create(props)` ou por fábricas estáticas nomeadas.
-- Não receba uma identidade separada no construtor da base de value objects.
-- As propriedades podem conter valores simples, entidades, outros value objects e coleções, conforme o contrato necessário.
-- Quando o objeto incluir datas, seu contrato pode estender `DefaultProps` e expor essas datas por getters. Não imponha esse contrato a todos os value objects.
+- For new composite objects that follow the shared base class, extend `ValueObject<Props>`. Before changing an existing object, check whether it uses that base class or an independent implementation.
+- Declare the properties in the same file as the class.
+- Use the inherited protected constructor and expose data or results through getters.
+- Build the instance through `static create(props)` or through named static factories.
+- Do not receive a separate identity in the constructor of the value object base class.
+- Properties may hold simple values, entities, other value objects and collections, as the contract requires.
+- When the object includes dates, its contract may extend `DefaultProps` and expose those dates through getters. Do not impose that contract on every value object.
 
-Não acrescente setters, `touch()` ou eventos de domínio aos value objects apenas para reproduzir a estrutura de uma entidade. Para representar outro valor ou atualizar uma projeção, prefira construir uma nova instância.
+Do not add setters, `touch()` or domain events to value objects just to reproduce the structure of an entity. To represent another value or update a projection, prefer building a new instance.
 
-Getters e ausência de setters não garantem imutabilidade profunda. Na base de referência, `protected props` restringe acesso no TypeScript, mas não congela nem copia as propriedades. Objetos, datas e arrays recebidos ou retornados por getters continuam compartilhando referências. Não afirme que o objeto é imutável em runtime nem introduza cópias defensivas ou congelamento sem um requisito explícito.
+Getters and the absence of setters do not guarantee deep immutability. In the reference base class, `protected props` restricts access in TypeScript, but it neither freezes nor copies the properties. Objects, dates and arrays received or returned by getters keep sharing references. Do not claim the object is immutable at runtime, and do not introduce defensive copies or freezing without an explicit requirement.
 
-## Construção
+## Construction
 
-- Use `create()` para receber as propriedades e retornar a instância.
-- Diferencie criação a partir de entrada bruta de reconstituição de um valor já armazenado. Uma fábrica de normalização pode transformar o texto; uma fábrica de reconstituição deve preservar o valor conforme seu contrato.
-- A presença de `create()` não significa que exista validação. Confira o corpo da fábrica antes de atribuir a ela garantias de validade.
-- Use fábricas nomeadas quando a construção selecionar um contexto ou valor interno.
-- Separe `<Nome>Params` de `<Nome>Props` quando a fábrica receber parte dos dados e acrescentar propriedades antes de chamar o construtor.
-- Não introduza validações, erros ou conversões que não façam parte do contrato solicitado.
+- Use `create()` to receive the properties and return the instance.
+- Distinguish creation from raw input from reconstitution of a value that is already stored. A normalization factory may transform the text; a reconstitution factory must preserve the value according to its contract.
+- The presence of `create()` does not mean there is validation. Check the factory body before attributing validity guarantees to it.
+- Use named factories when construction selects a context or an internal value.
+- Separate `<Name>Params` from `<Name>Props` when the factory receives part of the data and adds properties before calling the constructor.
+- Do not introduce validations, errors or conversions that are not part of the requested contract.
 
-## Getters e cálculos
+## Getters and calculations
 
-- Utilize `value` quando o objeto expuser um resultado principal, como uma URL montada a partir das propriedades.
-- Para objetos compostos, exponha getters com os nomes dos dados ou resultados correspondentes.
-- Métodos de cálculo podem ser utilizados pelos getters para produzir valores derivados das propriedades.
-- Receba explicitamente os dados necessários, como uma URL base, sem depender de configuração global dentro do objeto.
+- Use `value` when the object exposes one main result, such as a URL built from its properties.
+- For composite objects, expose getters named after the corresponding data or results.
+- Calculation methods may be used by getters to produce values derived from the properties.
+- Receive the required data explicitly, such as a base URL, without depending on global configuration inside the object.

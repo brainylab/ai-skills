@@ -1,7 +1,7 @@
-# Camada de domínio — regras de negócio
+# Domain layer — business rules
 
-- Entidades representam conceitos com identidade; aggregate roots delimitam grupos de objetos cuja consistência é controlada em conjunto.
-- Value objects representam valores e suas invariantes, como um e-mail válido.
-- Regras de negócio ficam no domínio, não em controllers ou repositórios de banco.
-- O domínio não conhece requisições HTTP, ORM, variáveis de ambiente ou SDKs externos.
-- Adicione eventos e serviços de domínio quando houver necessidade, sem criar estruturas vazias antecipadamente.
+- Entities represent concepts with identity; aggregate roots delimit groups of objects whose consistency is controlled together.
+- Value objects represent values and their invariants, such as a valid email.
+- Business rules live in the domain, not in controllers or database repositories.
+- The domain knows nothing about HTTP requests, the ORM, environment variables or external SDKs.
+- Add domain events and domain services when there is a need, without creating empty structures in advance.

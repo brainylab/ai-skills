@@ -1,12 +1,12 @@
-# Domínio: estrutura das entidades
+# Domain: entity structure
 
-- Declare a interface de propriedades estendendo `DefaultProps`.
-- Estenda `AggregateRoot<Props>` ou `AggregateRoot<Props, UniqueEntityID>`, conforme a assinatura da base adotada. O tipo da identidade principal é sempre `UniqueEntityID`, nunca `PublicEntityID`.
-- Utilize `this.props` para acessar o estado protegido da entidade.
-- Utilize a identidade, as datas e o método `touch()` mantidos pela classe-base, sem duplicar esses membros na entidade concreta.
-- Não declare um construtor próprio apenas para repetir o construtor protegido herdado.
+- Declare the properties interface extending `DefaultProps`.
+- Extend `AggregateRoot<Props>` or `AggregateRoot<Props, UniqueEntityID>`, according to the signature of the base class in use. The type of the main identity is always `UniqueEntityID`, never `PublicEntityID`.
+- Use `this.props` to access the entity's protected state.
+- Use the identity, the dates and the `touch()` method kept by the base class, without duplicating those members in the concrete entity.
+- Do not declare a constructor just to repeat the inherited protected constructor.
 
-O contrato de datas utilizado pelo padrão é:
+The date contract used by the pattern is:
 
 ```ts
 export interface DefaultProps {
@@ -15,4 +15,4 @@ export interface DefaultProps {
 }
 ```
 
-`Entity` concentra identidade, propriedades e datas. `AggregateRoot` estende essa estrutura com suporte a eventos de domínio, quando disponibilizado pela implementação compartilhada. A criação de uma entidade não exige adicionar eventos à fábrica.
+`Entity` holds identity, properties and dates. `AggregateRoot` extends that structure with support for domain events, when the shared implementation provides it. Creating an entity does not require adding events to the factory.

@@ -1,6 +1,6 @@
-# Infraestrutura: contracts técnicos
+# Infrastructure: technical contracts
 
-Defina somente as operações exigidas pelo recurso. Banco e servidor HTTP podem seguir estes modelos:
+Define only the operations the resource requires. The database and the HTTP server can follow these models:
 
 ```ts
 export interface DatabaseContract<TConnection = unknown> {
@@ -16,9 +16,9 @@ export interface HttpContract<TServer = unknown> {
 }
 ```
 
-- O adapter implementa o contrato com o tipo concreto da tecnologia.
-- Defina o comportamento de `connection()` e `server()` antes da inicialização e após o encerramento; não retorne uma referência inválida silenciosamente.
-- A obtenção de uma referência não deve esconder conexão assíncrona. Deixe a inicialização explícita em `start()` quando esse for o ciclo de vida adotado.
-- Não imponha `start()` e `stop()` a integrações sem recursos a inicializar ou liberar.
-- Não duplique tipos auxiliares entre `contracts/` e `index.ts`. Declare-os em um único lugar e reexporte quando necessário.
-- Preserve tipos concretos necessários aos repositórios. Uma factory de banco pode retornar `DatabaseContract<ConcreteConnection>` ou manter a inferência do adapter; não apague o tipo da conexão com uma anotação genérica que o reduza a `unknown`.
+- The adapter implements the contract with the concrete type of the technology.
+- Define the behavior of `connection()` and `server()` before startup and after shutdown; do not silently return an invalid reference.
+- Obtaining a reference must not hide an asynchronous connection. Keep initialization explicit in `start()` when that is the adopted lifecycle.
+- Do not impose `start()` and `stop()` on integrations that have no resources to initialize or release.
+- Do not duplicate helper types between `contracts/` and `index.ts`. Declare them in a single place and re-export when needed.
+- Preserve the concrete types the repositories need. A database factory may return `DatabaseContract<ConcreteConnection>` or keep the adapter's inferred type; do not erase the connection type with a generic annotation that reduces it to `unknown`.

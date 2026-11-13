@@ -1,23 +1,23 @@
-# Domínio: fábrica estática `create()`
+# Domain: static `create()` factory
 
-Siga esta sequência:
+Follow this sequence:
 
-1. Receba as propriedades tipadas.
-2. Utilize `Optional<Props, Campos>` para indicar os campos que podem ser omitidos na criação.
-3. Receba o `id` principal como `UniqueEntityID` no segundo argumento; propriedades adicionais de ID público, quando previstas, pertencem a `props`.
-4. Instancie a própria classe, preservando as propriedades com `...props`.
-5. Aplique os valores padrão necessários com `??`.
-6. Encaminhe a identidade ao construtor.
-7. Retorne a instância criada.
+1. Receive the typed properties.
+2. Use `Optional<Props, Fields>` to indicate the fields that may be omitted on creation.
+3. Receive the main `id` as a `UniqueEntityID` in the second argument; additional public ID properties, when the model has them, belong to `props`.
+4. Instantiate the class itself, preserving the properties with `...props`.
+5. Apply the required default values with `??`.
+6. Forward the identity to the constructor.
+7. Return the created instance.
 
-`Optional<T, K>` torna opcionais as propriedades selecionadas de `T`. Ele pode incluir datas conforme a convenção de assinatura adotada, mesmo quando elas já forem opcionais em `DefaultProps`.
+`Optional<T, K>` makes the selected properties of `T` optional. It may include dates according to the adopted signature convention, even when they are already optional in `DefaultProps`.
 
-Utilize `??` para preservar valores como `false` e `0`. Não acrescente validações, normalizações ou novos tipos de erro somente para preencher a fábrica.
+Use `??` to preserve values such as `false` and `0`. Do not add validations, normalizations or new error types just to fill in the factory.
 
-## Datas na construção
+## Dates on construction
 
-- Preserve datas recebidas nas propriedades.
-- Quando a fábrica definir `createdAt`, utilize `props.createdAt ?? new Date()`.
-- Quando as datas forem inicializadas pela classe-base, respeite esse contrato.
-- Datas específicas do negócio podem continuar opcionais até que um setter as atualize.
-- A atribuição de valores a `props` na construção não executa os setters da entidade.
+- Preserve dates received in the properties.
+- When the factory sets `createdAt`, use `props.createdAt ?? new Date()`.
+- When dates are initialized by the base class, respect that contract.
+- Business-specific dates may stay optional until a setter updates them.
+- Assigning values to `props` on construction does not run the entity's setters.

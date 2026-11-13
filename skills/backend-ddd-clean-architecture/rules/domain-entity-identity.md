@@ -1,26 +1,26 @@
-# Domínio: identidade e assinatura da base
+# Domain: identity and base class signature
 
-## Identidade principal: sempre `UniqueEntityID`
+## Main identity: always `UniqueEntityID`
 
-- O `id` principal de toda entidade é sempre `UniqueEntityID`, encapsulando um `number` associado ao identificador autoincremental da persistência. Não aceite UUIDs ou strings nessa primitiva.
-- Mantenha o `id` na classe-base, fora da interface de propriedades. Receba-o como segundo argumento de `create()` e encaminhe-o ao construtor sem substituí-lo.
-- O incremento é responsabilidade da persistência, não da entidade ou do wrapper de identidade. Não use `new UniqueEntityID()` sem valor nem gere números aleatórios ou sequenciais no domínio.
-- Se o ID só existir após a inserção, siga o contrato do projeto para entidades ainda não persistidas, sem trocar seu tipo por `PublicEntityID` nem inventar IDs provisórios.
+- The main `id` of every entity is always `UniqueEntityID`, wrapping a `number` associated with the auto-increment identifier of the persistence layer. Do not accept UUIDs or strings in this primitive.
+- Keep the `id` in the base class, outside the properties interface. Receive it as the second argument of `create()` and forward it to the constructor without replacing it.
+- Incrementing is the responsibility of the persistence layer, not of the entity or the identity wrapper. Do not use `new UniqueEntityID()` without a value, and do not generate random or sequential numbers in the domain.
+- If the ID only exists after insertion, follow the project's contract for entities not yet persisted, without changing its type to `PublicEntityID` or inventing provisional IDs.
 
-## Propriedade adicional de ID público: `PublicEntityID`
+## Additional public ID property: `PublicEntityID`
 
-- Use `PublicEntityID`, exclusivamente UUID, somente quando o modelo possuir uma propriedade adicional de ID público, como `public_id`. Essa propriedade não substitui nem altera o `id` principal.
-- Declare a propriedade em `<Nome>Props` e exponha-a por getter, como os demais dados da entidade. Preserve a convenção de nomes do projeto.
-- A existência do tipo `PublicEntityID` não exige adicionar `public_id` a todas as entidades. Quando o modelo exigir o campo, ele pode ser obrigatório nas propriedades; opcional é sua existência no modelo, não necessariamente seu valor.
-- Não use `PublicEntityID` como argumento de identidade da classe-base nem como tipo genérico da identidade principal.
-- Preserve UUIDs recebidos. Gere um novo UUID somente quando previsto para a criação, seguindo a API da primitiva; nunca ao reconstituir uma entidade existente.
-- Mappers devem preservar o `id` principal e a propriedade pública, quando existente, separadamente. O uso dessa propriedade nos contratos externos depende dos requisitos do projeto e não substitui autorização.
+- Use `PublicEntityID`, which is exclusively a UUID, only when the model has an additional public ID property, such as `public_id`. That property neither replaces nor changes the main `id`.
+- Declare the property in `<Name>Props` and expose it through a getter, like the rest of the entity's data. Preserve the project's naming convention.
+- The existence of the `PublicEntityID` type does not require adding `public_id` to every entity. When the model requires the field, it may be mandatory in the properties; what is optional is its existence in the model, not necessarily its value.
+- Do not use `PublicEntityID` as the identity argument of the base class or as the generic type of the main identity.
+- Preserve UUIDs that are received. Generate a new UUID only when creation calls for it, following the primitive's API; never when reconstituting an existing entity.
+- Mappers must preserve the main `id` and the public property, when present, separately. Using that property in external contracts depends on the project's requirements and does not replace authorization.
 
-## Parâmetros genéricos
+## Generic parameters
 
-As duas formas abaixo são alternativas, não assinaturas intercambiáveis:
+The two forms below are alternatives, not interchangeable signatures:
 
-- `AggregateRoot<ConfigurationProps>`: para uma base que recebe somente o contrato de propriedades.
-- `AggregateRoot<ConfigurationProps, UniqueEntityID>`: para uma base que também recebe o tipo da identidade.
+- `AggregateRoot<ConfigurationProps>`: for a base class that receives only the properties contract.
+- `AggregateRoot<ConfigurationProps, UniqueEntityID>`: for a base class that also receives the identity type.
 
-Escolha a forma suportada pelo projeto. Não acrescente um parâmetro genérico a uma base que não o declara.
+Choose the form the project supports. Do not add a generic parameter to a base class that does not declare it.

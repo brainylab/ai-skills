@@ -1,6 +1,6 @@
-# Infraestrutura: gateways e contratos técnicos de integração
+# Infrastructure: gateways and technical integration contracts
 
-O gateway descreve o que a aplicação precisa, sem indicar como o provedor atende à operação:
+The gateway describes what the application needs, without saying how the provider fulfills the operation:
 
 ```ts
 // src/gateways/secrets/secrets-gateway.ts
@@ -9,13 +9,13 @@ export abstract class SecretsGateway {
 }
 ```
 
-Declare gateways e ports como `abstract class` com métodos abstratos. Adapters os estendem com `extends`. Contratos de repositório e contratos técnicos da infra continuam sendo `interface`.
+Declare gateways and ports as an `abstract class` with abstract methods. Adapters extend them with `extends`. Repository contracts and technical infra contracts remain an `interface`.
 
-Defina entradas, saídas, ausência de dados e falhas de forma explícita. Neste modelo, a operação retorna uma string ou falha; não retorna `undefined` como se fosse um segredo válido. Em um projeto que utiliza `Either` ou outro resultado tipado, adapte o contrato ao padrão existente.
+Define inputs, outputs, missing data and failures explicitly. In this model, the operation returns a string or fails; it does not return `undefined` as if it were a valid secret. In a project that uses `Either` or another typed result, adapt the contract to the existing pattern.
 
-## Contrato técnico separado
+## Separate technical contract
 
-Implemente o gateway diretamente no adapter. Crie um contrato técnico em `src/infra/gateways/<nome>/contracts/` somente quando a implementação precisar de operações técnicas adicionais, como liberar conexões, e reutilize o gateway:
+Implement the gateway directly in the adapter. Create a technical contract in `src/infra/gateways/<name>/contracts/` only when the implementation needs additional technical operations, such as releasing connections, and reuse the gateway:
 
 ```ts
 // src/infra/gateways/secrets/contracts/secrets-contract.ts
@@ -26,4 +26,4 @@ export interface SecretsContract extends SecretsGateway {
 }
 ```
 
-Nunca copie a assinatura de `getValue()` em dois contratos independentes. Os métodos técnicos adicionais pertencem ao contrato da infra e ao bootstrap; o caso de uso continua recebendo apenas `SecretsGateway`.
+Never copy the `getValue()` signature into two independent contracts. The additional technical methods belong to the infra contract and to the bootstrap; the use case still receives only `SecretsGateway`.

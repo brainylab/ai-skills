@@ -1,6 +1,6 @@
-# Domínio: modelo de entidade com getters e setter
+# Domain: entity model with getters and a setter
 
-O modelo utiliza a assinatura de base com um parâmetro genérico e identidade principal obrigatória do tipo `UniqueEntityID`. `configured` e `configuredAt` demonstram o setter e seus efeitos nas datas. Neste exemplo, o modelo também exige a propriedade adicional `public_id: PublicEntityID`; omita essa propriedade, seu import e seu getter em entidades que não possuam ID público.
+The model uses the base class signature with one generic parameter and a mandatory main identity of type `UniqueEntityID`. `configured` and `configuredAt` demonstrate the setter and its effects on dates. In this example, the model also requires the additional property `public_id: PublicEntityID`; omit that property, its import and its getter in entities that have no public ID.
 
 ```ts
 import { AggregateRoot } from "@core/entities/aggregate-root";
@@ -53,4 +53,4 @@ export class Configuration extends AggregateRoot<ConfigurationProps> {
 }
 ```
 
-A fábrica recebe `id: UniqueEntityID` separadamente de `props.public_id: PublicEntityID`. O `...props` preserva a propriedade pública recebida; ela não é encaminhada no lugar do `id` ao construtor da classe-base. Ajuste os imports às localizações reais das primitivas no projeto.
+The factory receives `id: UniqueEntityID` separately from `props.public_id: PublicEntityID`. `...props` preserves the public property that was received; it is not forwarded in place of the `id` to the base class constructor. Adjust the imports to the real locations of the primitives in the project.

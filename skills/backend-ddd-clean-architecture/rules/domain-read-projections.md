@@ -1,30 +1,30 @@
-# Domínio: projeções de leitura
+# Domain: read projections
 
-Uma projeção de leitura é um value object que reúne, para uma consulta, dados de mais de uma entidade — por exemplo, um comentário com o nome do autor. Ela existe para evitar que entidades recebam campos apenas para enriquecer respostas.
+A read projection is a value object that gathers, for a query, data from more than one entity — for example, a comment together with its author's name. It exists so that entities do not receive fields just to enrich responses.
 
-Projeções são um padrão opcional. Não modele todo resultado de consulta como value object: use-as quando a consulta precisar de dados que não pertencem a uma única entidade.
+Projections are an optional pattern. Do not model every query result as a value object: use them when the query needs data that does not belong to a single entity.
 
-## Fluxo de consulta
+## Query flow
 
-1. O contrato do repositório, na aplicação, declara a projeção como retorno, sem tipos do ORM.
-2. A implementação na infraestrutura executa a consulta com os joins ou includes necessários.
-3. Um mapper converte o resultado da persistência na projeção, por sua fábrica `create()`.
-4. O caso de uso retorna a projeção e o presenter a converte para o formato público da resposta.
+1. The repository contract, in the application layer, declares the projection as its return type, without ORM types.
+2. The infrastructure implementation runs the query with the required joins or includes.
+3. A mapper converts the persistence result into the projection, through its `create()` factory.
+4. The use case returns the projection, and the presenter converts it to the public response format.
 
-## Regras
+## Rules
 
-- Não acrescente dados de outra entidade a uma entidade ou aggregate root apenas para atender uma consulta enriquecida; crie ou reutilize a projeção adequada.
-- Mantenha joins, includes e tipos do ORM na infraestrutura. A projeção recebe dados explícitos; ela não consulta repositórios, banco ou configuração global.
-- Não trate a projeção como DTO HTTP: ela é independente do transporte, e o presenter define a resposta pública, inclusive os nomes dos campos expostos.
-- Não use uma projeção para executar alterações de negócio no lugar da entidade ou do aggregate root.
-- IDs presentes nas propriedades da projeção são referências às entidades consultadas, não uma identidade própria. Eles seguem a política de [domain-entity-identity.md](domain-entity-identity.md).
-- Use coleções simples na projeção. Listas com rastreamento de alterações pertencem ao aggregate root; não leve esse rastreamento para a leitura sem necessidade.
-- Ao montar a projeção a partir de valores já armazenados, use a fábrica de reconstituição do value object interno, não a de normalização. Um slug persistido, por exemplo, é preservado como está, e não gerado novamente a partir do título.
-- Ao ler de cache, `JSON.parse()` sozinho não reconstitui instâncias, getters, datas nem wrappers de ID. Reconstitua a projeção pelo mapper ou pela fábrica antes de retorná-la.
+- Do not add data from another entity to an entity or aggregate root just to serve an enriched query; create or reuse the appropriate projection.
+- Keep joins, includes and ORM types in the infrastructure. The projection receives explicit data; it does not query repositories, the database or global configuration.
+- Do not treat the projection as an HTTP DTO: it is independent of the transport, and the presenter defines the public response, including the names of the exposed fields.
+- Do not use a projection to perform business changes in place of the entity or the aggregate root.
+- IDs present in the projection's properties are references to the queried entities, not an identity of its own. They follow the policy in [domain-entity-identity.md](domain-entity-identity.md).
+- Use plain collections in the projection. Lists with change tracking belong to the aggregate root; do not bring that tracking into the read side without need.
+- When building the projection from values that are already stored, use the reconstitution factory of the inner value object, not the normalization one. A persisted slug, for example, is preserved as it is, not generated again from the title.
+- When reading from a cache, `JSON.parse()` alone does not reconstitute instances, getters, dates or ID wrappers. Reconstitute the projection through the mapper or the factory before returning it.
 
-## Modelo
+## Model
 
-Os nomes são ilustrativos. A projeção reúne dados do comentário e o nome do autor; `commentId` e `authorId` são referências.
+The names are illustrative. The projection gathers the comment data and the author's name; `commentId` and `authorId` are references.
 
 ```ts
 import { ValueObject } from "@core/entities/value-object";
@@ -71,4 +71,4 @@ export class CommentWithAuthor extends ValueObject<CommentWithAuthorProps> {
 }
 ```
 
-O contrato do repositório declara, por exemplo, `findManyByQuestionIdWithAuthor(...): Promise<CommentWithAuthor[]>`. O mapper da infraestrutura chama `CommentWithAuthor.create(...)` com os dados da consulta, e o presenter decide como expor `author` na resposta.
+The repository contract declares, for example, `findManyByQuestionIdWithAuthor(...): Promise<CommentWithAuthor[]>`. The infrastructure mapper calls `CommentWithAuthor.create(...)` with the query data, and the presenter decides how to expose `author` in the response.

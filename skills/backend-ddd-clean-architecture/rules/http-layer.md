@@ -1,8 +1,8 @@
-# Camada de apresentação — entrada e saída
+# Presentation layer — input and output
 
-- Controllers validam a requisição, chamam casos de uso e traduzem o resultado para o transporte.
-- Todos os schemas de validação de um controller (`query`, `params`, `body`, `headers` e `response`) ficam no próprio arquivo do controller.
-- Não crie arquivos separados para schemas dos controllers. Valide-os pelo fluxo HTTP nos testes E2E, usando os schemas registrados pelo controller, sem duplicar suas definições.
-- Presenters transformam os resultados em respostas públicas, sem executar consultas ou regras de negócio.
-- Factories conectam casos de uso, repositórios e adapters concretos.
-- O framework HTTP pode ser usado na apresentação e na infraestrutura HTTP, nunca no domínio ou na aplicação.
+- Controllers validate the request, call use cases and translate the result to the transport.
+- All validation schemas of a controller (`query`, `params`, `body`, `headers` and `response`) live in the controller's own file.
+- Do not create separate files for controller schemas. Validate them through the HTTP flow in E2E tests, using the schemas registered by the controller, without duplicating their definitions.
+- Presenters transform results into public responses, without running queries or business rules.
+- Factories wire use cases to concrete repositories and adapters.
+- The HTTP framework may be used in the presentation layer and in the HTTP infrastructure, never in the domain or the application layer.

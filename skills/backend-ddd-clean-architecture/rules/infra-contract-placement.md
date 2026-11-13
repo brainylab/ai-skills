@@ -1,25 +1,25 @@
-# Infraestrutura: localização dos contratos e direção dos imports
+# Infrastructure: contract placement and import direction
 
-Distinga três tipos de contrato:
+Distinguish three kinds of contract:
 
-1. **Persistência do módulo:** fica em `modules/<modulo>/application/repositories/` e descreve operações sobre conceitos do domínio, não consultas SQL ou tabelas.
-2. **Integração da aplicação:** fica em `modules/<modulo>/application/ports/` quando exclusiva do módulo, ou em `src/gateways/` quando realmente compartilhada. Descreve a capacidade necessária ao consumidor.
-3. **Recurso técnico:** fica em `src/infra/<recurso>/contracts/` ou na infraestrutura do módulo. Descreve operações técnicas usadas por adapters, composição e outras implementações de infraestrutura.
+1. **Module persistence:** lives in `modules/<module>/application/repositories/` and describes operations on domain concepts, not SQL queries or tables.
+2. **Application integration:** lives in `modules/<module>/application/ports/` when exclusive to the module, or in `src/gateways/` when truly shared. It describes the capability the consumer needs.
+3. **Technical resource:** lives in `src/infra/<resource>/contracts/` or in the module's infrastructure. It describes technical operations used by adapters, composition and other infrastructure implementations.
 
-Imports permitidos neste padrão:
+Imports allowed in this pattern:
 
 ```text
-application/use-case → application/ports ou gateways
-infra/gateways/adapter → gateway ou contrato técnico que o estende
-infra/factory → adapters, contracts e configuração
-infra/app → pontos de acesso dos recursos técnicos
-infrastructure/repositories → contrato de persistência e infraestrutura de banco
-infrastructure/adapters → port ou gateway e helpers técnicos de infra
-presentation/controllers → infra/http (helper de controller e erros HTTP)
+application/use-case → application/ports or gateways
+infra/gateways/adapter → gateway or the technical contract that extends it
+infra/factory → adapters, contracts and configuration
+infra/app → entry points of the technical resources
+infrastructure/repositories → persistence contract and database infrastructure
+infrastructure/adapters → port or gateway and technical helpers from infra
+presentation/controllers → infra/http (controller helper and HTTP errors)
 ```
 
-- Domínio e aplicação nunca importam `src/infra/`, mesmo com `import type`.
-- Gateways da aplicação não importam contratos de infraestrutura. Se houver extensão, a direção é `SecretsContract extends SecretsGateway`, nunca o contrário.
-- Não exponha tipos do SDK, respostas HTTP do provedor, clientes de ORM ou objetos de configuração nos gateways e contratos de repositório.
-- Um contrato técnico de banco pode expor a conexão concreta por um parâmetro genérico, pois seus consumidores também são infraestrutura. Isso não autoriza o vazamento desse tipo para aplicação ou domínio.
-- Use `import type` para dependências utilizadas apenas como tipos.
+- The domain and application layers never import `src/infra/`, not even with `import type`.
+- Application gateways do not import infrastructure contracts. If there is an extension, the direction is `SecretsContract extends SecretsGateway`, never the opposite.
+- Do not expose SDK types, provider HTTP responses, ORM clients or configuration objects in gateways and repository contracts.
+- A technical database contract may expose the concrete connection through a generic parameter, because its consumers are also infrastructure. That does not allow the type to leak into the application or domain layers.
+- Use `import type` for dependencies used only as types.

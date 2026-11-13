@@ -1,15 +1,15 @@
-# Infraestrutura: organização e nomenclatura
+# Infrastructure: organization and naming
 
-Estrutura de referência para recursos compartilhados:
+Reference structure for shared resources:
 
 ```text
 src/
 ├── gateways/
 │   └── secrets/
-│       └── secrets-gateway.ts           # SecretsGateway: contrato da aplicação
+│       └── secrets-gateway.ts           # SecretsGateway: application contract
 ├── infra/
-│   ├── app.ts                           # composição do ciclo de vida
-│   ├── env.ts                           # leitura e validação do ambiente
+│   ├── app.ts                           # lifecycle composition
+│   ├── env.ts                           # environment loading and validation
 │   ├── database/
 │   │   ├── contracts/
 │   │   │   └── database-contract.ts
@@ -33,16 +33,16 @@ src/
 │           └── factory/
 │               └── make-secrets-gateway.ts
 └── modules/
-    └── <modulo>/
+    └── <module>/
         ├── application/
-        │   ├── ports/                   # contratos exclusivos do módulo
-        │   └── repositories/            # contratos de persistência do módulo
-        └── infrastructure/              # implementações exclusivas do módulo
+        │   ├── ports/                   # contracts exclusive to the module
+        │   └── repositories/            # persistence contracts of the module
+        └── infrastructure/              # implementations exclusive to the module
 ```
 
-- Use arquivos em `kebab-case`, contratos e classes em `PascalCase` e factories com prefixo `make`.
-- Nomeie contratos técnicos como `DatabaseContract` e `HttpContract`; gateways como `SecretsGateway`, em `<nome>-gateway.ts`; adapters pela tecnologia e capacidade, como `AwsSmSecretsAdapter`, em `<tecnologia>-<nome>-adapter.ts`.
-- Nomeie contratos de repositório no plural, como `UserRepositories` em `user-repositories.ts`, e suas implementações pela tecnologia, como `DrizzleUserRepositories` e `InMemoryUserRepositories`.
-- Use `adapters/` e `factory/` em todos os recursos de `src/infra/`, inclusive gateways. Em projetos existentes, preserve a convenção local de singular/plural das pastas.
-- Use a grafia `infrastructure/` para a infraestrutura exclusiva dos módulos. Reserve `src/infra/` para a infraestrutura compartilhada, conforme [arch-conventions.md](arch-conventions.md).
-- Não crie diretórios vazios. Um gateway não exige `contracts/` nem `index.ts` quando seu próprio contrato já atende à implementação; crie `contracts/` somente no caso descrito em [infra-gateways.md](infra-gateways.md).
+- Use `kebab-case` files, `PascalCase` contracts and classes, and the `make` prefix for factories.
+- Name technical contracts like `DatabaseContract` and `HttpContract`; gateways like `SecretsGateway`, in `<name>-gateway.ts`; adapters after the technology and the capability, like `AwsSmSecretsAdapter`, in `<technology>-<name>-adapter.ts`.
+- Name repository contracts in the plural, like `UserRepositories` in `user-repositories.ts`, and their implementations after the technology, like `DrizzleUserRepositories` and `InMemoryUserRepositories`.
+- Use `adapters/` and `factory/` in every resource under `src/infra/`, including gateways. In existing projects, preserve the local singular/plural convention for folders.
+- Use the spelling `infrastructure/` for the infrastructure exclusive to a module. Reserve `src/infra/` for shared infrastructure, as described in [arch-conventions.md](arch-conventions.md).
+- Do not create empty directories. A gateway does not require `contracts/` or `index.ts` when its own contract already serves the implementation; create `contracts/` only in the case described in [infra-gateways.md](infra-gateways.md).

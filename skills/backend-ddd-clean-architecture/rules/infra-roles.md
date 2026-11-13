@@ -1,18 +1,18 @@
-# Infraestrutura: papéis de gateways, contracts, adapters e factories
+# Infrastructure: roles of gateways, contracts, adapters and factories
 
-Implemente recursos técnicos com separação entre **contracts**, **adapters** e **factories**, mantendo os casos de uso independentes de drivers, frameworks, configuração e SDKs externos.
+Implement technical resources with a separation between **contracts**, **adapters** and **factories**, keeping use cases independent of drivers, frameworks, configuration and external SDKs.
 
-Use as regras `infra-*` junto de [infra-layer.md](infra-layer.md) e [arch-dependency-rule.md](arch-dependency-rule.md) ao implementar banco de dados, HTTP, mensageria ou integrações. Os exemplos em TypeScript são modelos estruturais: adapte nomes, aliases, assinaturas e estratégia de erros ao projeto, sem criar abstrações ou recursos sem necessidade.
+Use the `infra-*` rules together with [infra-layer.md](infra-layer.md) and [arch-dependency-rule.md](arch-dependency-rule.md) when implementing the database, HTTP, messaging or integrations. The TypeScript examples are structural models: adapt names, aliases, signatures and the error strategy to the project, without creating abstractions or resources that are not needed.
 
-## Responsabilidades
+## Responsibilities
 
-| Elemento | Responsabilidade | Não deve fazer |
+| Element | Responsibility | Must not |
 | --- | --- | --- |
-| Gateway | Definir a capacidade de uma integração necessária à aplicação. | Expor SDKs, ambiente, clientes concretos ou ciclo de vida técnico ao caso de uso. |
-| Contract da infra | Definir a interface técnica de um recurso, como conexão, servidor e ciclo de vida. | Substituir contratos de aplicação ou carregar regras de negócio. |
-| Adapter | Implementar um contrato utilizando uma tecnologia concreta. | Coordenar casos de uso, autorizar operações de negócio ou responder HTTP fora do adapter HTTP. |
-| Factory | Escolher implementações e montar suas dependências e configurações. | Executar regras de negócio ou iniciar recursos implicitamente. |
-| `index.ts` | Expor o ponto de acesso do recurso e os tipos técnicos necessários. | Duplicar contratos, esconder inicialização assíncrona ou tornar infraestrutura acessível às camadas internas. |
-| Bootstrap | Coordenar inicialização, encerramento e tratamento de falhas dos recursos. | Conter regras dos módulos de negócio. |
+| Gateway | Define the capability of an integration that the application needs. | Expose SDKs, the environment, concrete clients or the technical lifecycle to the use case. |
+| Infra contract | Define the technical interface of a resource, such as connection, server and lifecycle. | Replace application contracts or carry business rules. |
+| Adapter | Implement a contract using a concrete technology. | Coordinate use cases, authorize business operations or respond to HTTP outside the HTTP adapter. |
+| Factory | Choose implementations and assemble their dependencies and configuration. | Run business rules or start resources implicitly. |
+| `index.ts` | Expose the entry point of the resource and the technical types that are needed. | Duplicate contracts, hide asynchronous initialization or make infrastructure reachable from the inner layers. |
+| Bootstrap | Coordinate startup, shutdown and failure handling of the resources. | Contain rules of the business modules. |
 
-Um gateway é um contrato de saída da aplicação, não um servidor HTTP nem necessariamente uma classe concreta. Um adapter implementa esse contrato e traduz as operações para o provedor escolhido.
+A gateway is an outbound contract of the application, not an HTTP server and not necessarily a concrete class. An adapter implements that contract and translates its operations to the chosen provider.

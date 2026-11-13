@@ -1,10 +1,10 @@
-# Camada de infraestrutura — implementações técnicas
+# Infrastructure layer — technical implementations
 
-- Implementa repositórios e ports definidos pelas camadas internas.
-- Contém consultas, schemas, mappers e integrações com ferramentas externas.
-- Mappers convertem dados de persistência em objetos do domínio e vice-versa, evitando expor tipos do ORM às camadas internas.
-- Detalhes exclusivos de um módulo ficam em sua `infrastructure/`; conexão de banco, servidor HTTP e outros recursos compartilhados ficam em `src/infra/`.
-- Configuração de ambiente é resolvida na infraestrutura e os valores necessários são injetados nas dependências.
-- Organize os serviços técnicos compartilhados com `adapters/` para implementações concretas, `contracts/` para interfaces técnicas e `factory/` para criação e configuração das instâncias, quando essa separação for necessária.
-- Contratos de infraestrutura descrevem operações técnicas, como iniciar e encerrar conexões ou servidores. Eles não substituem os contratos de repositórios e ports da aplicação e não devem ser importados pelos casos de uso.
-- Quando a ferramenta exigir agregadores globais de schemas ou relações, mantenha-os em `infra/database/`, sem torná-los contratos do domínio.
+- Implements the repositories and ports defined by the inner layers.
+- Contains queries, schemas, mappers and integrations with external tools.
+- Mappers convert persistence data into domain objects and back, so that ORM types are not exposed to the inner layers.
+- Details exclusive to a module live in its `infrastructure/`; the database connection, the HTTP server and other shared resources live in `src/infra/`.
+- Environment configuration is resolved in the infrastructure, and the required values are injected into the dependencies.
+- Organize shared technical services with `adapters/` for concrete implementations, `contracts/` for technical interfaces and `factory/` for creating and configuring instances, when that separation is needed.
+- Infrastructure contracts describe technical operations, such as starting and stopping connections or servers. They do not replace the application's repository contracts and ports, and must not be imported by use cases.
+- When the tool requires global aggregators of schemas or relations, keep them in `infra/database/`, without turning them into domain contracts.

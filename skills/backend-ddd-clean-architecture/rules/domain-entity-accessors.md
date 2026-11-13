@@ -1,21 +1,21 @@
-# Domínio: getters e setters
+# Domain: getters and setters
 
 ## Getters
 
-Exponha as propriedades por getters que retornam `this.props.<campo>`. Utilize os getters herdados para identidade e datas mantidas pela base.
+Expose properties through getters that return `this.props.<field>`. Use the inherited getters for the identity and the dates kept by the base class.
 
 ## Setters
 
-Adicione setters somente aos campos que precisam permitir alteração. A presença de um getter não exige um setter correspondente.
+Add setters only to the fields that must allow changes. Having a getter does not require a matching setter.
 
-Quando a alteração também registrar uma data específica, mantenha a sequência:
+When the change also records a specific date, keep this sequence:
 
-1. Atribua o valor recebido à propriedade.
-2. Atualize a data correspondente com `new Date()`.
-3. Chame `this.touch()` para atualizar `updatedAt`.
+1. Assign the received value to the property.
+2. Update the corresponding date with `new Date()`.
+3. Call `this.touch()` to update `updatedAt`.
 
-Se não houver uma data específica associada à alteração, não crie um campo apenas para reproduzir essa sequência.
+If there is no specific date associated with the change, do not create a field just to reproduce this sequence.
 
-No formato de setter mostrado em [domain-entity-example.md](domain-entity-example.md), a data é atualizada em toda atribuição, inclusive quando o valor é `false` ou igual ao anterior. Ela registra a atribuição, não necessariamente uma transição de estado. Uma política diferente precisa ser definida pelo requisito de negócio, não presumida por esta regra.
+In the setter format shown in [domain-entity-example.md](domain-entity-example.md), the date is updated on every assignment, including when the value is `false` or equal to the previous one. It records the assignment, not necessarily a state transition. A different policy must be defined by the business requirement, not assumed by this rule.
 
-Não substitua setters por métodos adicionais nem acrescente funções privadas de normalização sem uma necessidade explícita.
+Do not replace setters with additional methods, and do not add private normalization functions without an explicit need.
