@@ -4,7 +4,7 @@ To register a user:
 
 1. `CreateUserController` validates the input and calls `CreateUserUseCase`.
 2. `CreateUserUseCase` queries the `UserRepositories` contract to check whether the email is already in use.
-3. The use case uses `PasswordHasher` to generate the hash and creates the `User` entity, respecting the domain invariants.
+3. The use case uses `PasswordHasher` to generate the hash, reserves the ID with `UserRepositories.nextId()` and creates the `User` entity with that ID, respecting the domain invariants.
 4. The concrete implementation of `UserRepositories` converts the data and persists the user.
 5. The use case returns an explicit output, without credentials; the presenter formats that output and the controller responds with the appropriate HTTP status.
 

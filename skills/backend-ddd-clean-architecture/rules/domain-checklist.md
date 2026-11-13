@@ -4,6 +4,7 @@
 - Imports point to the primitives and aliases available in the project.
 - The `AggregateRoot` signature matches the shared implementation.
 - The main identity is always a numeric `UniqueEntityID`, kept by the base class and preserved by the factory, with incrementing under the responsibility of the persistence layer.
+- New entities receive an ID reserved by the repository's `nextId()` before `create()`; no entity exists without an ID.
 - `PublicEntityID` represents only UUIDs in additional properties defined by the model, never the main identity or its generic parameter.
 - `public_id` is not mandatory in every entity; when it exists, the factory and the mappers preserve its value without generating another UUID on reconstitution.
 - Default values use `??` and do not overwrite valid explicit values.
