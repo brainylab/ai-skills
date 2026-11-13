@@ -49,11 +49,13 @@ src/
 │       │           └── presenters/
 │       │               └── user-presenter.ts
 │       │
-│       └── test/                         # test support for the module
-│           ├── factories/
-│           │   └── make-user.ts
-│           └── repositories/
-│               └── in-memory-user-repositories.ts
+│       ├── test/                         # test support for the module
+│       │   ├── factories/
+│       │   │   └── make-user.ts
+│       │   └── repositories/
+│       │       └── in-memory-user-repositories.ts
+│       │
+│       └── index.ts                      # public entry point for other modules
 │
 ├── core/                                 # shared, framework-free primitives
 │   ├── entities/                         # Entity, AggregateRoot, ValueObject, IDs

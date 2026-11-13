@@ -12,6 +12,7 @@ presentation   → application, domain, core and src/infra/http
 - `application/` does not depend on infrastructure or presentation. It may import shared contracts from `src/gateways/`.
 - A module's `infrastructure/` may import the shared infrastructure in `src/infra/`, such as the database entry point and technical helpers, and the contracts in `src/gateways/`.
 - `presentation/` imports from `src/infra/http/` only transport support, such as the controller creation helper and HTTP errors. It does not import the database, concrete gateways or the module's `infrastructure/`; those dependencies come in through factories.
+- Between modules, only `infrastructure/` imports another module, and only through that module's `index.ts`. The other layers reach another module through a port of their own module (see [arch-module-isolation.md](arch-module-isolation.md)).
 - `core/` does not depend on business modules or on infrastructure.
 - Factories are composition points: they may import concrete implementations in order to inject them into use cases.
 - The rule also applies to type imports: a type inferred from the ORM is still an infrastructure dependency.
