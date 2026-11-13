@@ -1,4 +1,4 @@
-# Guidelines
+# AI Skills
 
 Skills para agentes de código com as diretrizes de arquitetura da BrainyLab.
 
@@ -13,13 +13,13 @@ Skills para agentes de código com as diretrizes de arquitetura da BrainyLab.
 Com a CLI do [skills.sh](https://skills.sh):
 
 ```sh
-npx skills add brainylab/guidelines
+npx skills add brainylab/ai-skills
 ```
 
 Para instalar uma skill específica:
 
 ```sh
-npx skills add brainylab/guidelines --skill backend-ddd-clean-architecture
+npx skills add brainylab/ai-skills --skill backend-ddd-clean-architecture
 ```
 
 A CLI detecta os agentes instalados (Claude Code, Zed, Cursor e outros) e copia a skill para a pasta de cada um.
